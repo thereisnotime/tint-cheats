@@ -8,6 +8,7 @@ import StatusBadge from '../components/StatusBadge.astro';
 import CompatibilityMatrix from '../components/CompatibilityMatrix.astro';
 import ChecksumBox from '../components/ChecksumBox.astro';
 import FeatureList from '../components/FeatureList.astro';
+import CommunityCallout from '../components/CommunityCallout.astro';
 import Icon from '../components/Icon.astro';
 import { url } from '../utils/url';
 
@@ -200,6 +201,10 @@ const ogImage = data.cover?.src;
       <slot />
     </div>
   </section>
+
+  <CommunityCallout
+    blurb={`Get notified when the ${data.game} table updates, request new cheats, or report breakage. Join whichever you prefer.`}
+  />
 
   <Disclaimer singleplayerOnly={data.singleplayer_only} />
 </Base>

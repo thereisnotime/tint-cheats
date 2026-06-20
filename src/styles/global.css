@@ -308,6 +308,16 @@ samp {
 .site-nav a.nav-cta:hover {
   background: var(--info-bg);
 }
+.site-nav a.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2);
+  color: var(--text-muted);
+}
+.site-nav a.nav-icon:hover {
+  color: var(--text);
+  background: var(--bg-subtle);
+}
 
 /* --------------------------------------------------------------------------
    Footer
@@ -1243,6 +1253,64 @@ samp {
 }
 .breadcrumb a {
   color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Community callout (Telegram / Matrix)
+   -------------------------------------------------------------------------- */
+
+.community {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-5);
+  margin: var(--space-6) 0;
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  background:
+    radial-gradient(120% 160% at 0% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 55%),
+    var(--bg-elev);
+}
+.community__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex: 1 1 20rem;
+}
+.community__icon {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  color: var(--accent);
+}
+.community__title {
+  margin: 0 0 var(--space-1);
+  font-size: 1.2rem;
+}
+.community__blurb {
+  margin: 0;
+  color: var(--text-muted);
+}
+.community__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.community__btn {
+  color: #fff;
+  font-weight: 600;
+}
+.community__btn:hover {
+  color: #fff;
+  filter: brightness(1.07);
+  text-decoration: none;
+}
+.community__btn--tg {
+  background: #229ed9;
+}
+.community__btn--mx {
+  background: #0dbd8b;
 }
 
 /* --------------------------------------------------------------------------

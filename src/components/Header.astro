@@ -1,6 +1,7 @@
 ---
 import { url } from '../utils/url';
 import Icon from './Icon.astro';
+import { TELEGRAM, MATRIX } from '../utils/community';
 
 const REPO = 'https://github.com/thereisnotime/tint-cheats';
 const REPORT_ISSUE = `${REPO}/issues/new?template=report-issue.yml`;
@@ -19,6 +20,12 @@ const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
       <a href={url('/how-to-use-cheat-engine')}>How to use</a>
       <a href={REPORT_ISSUE} rel="noopener">Report issue</a>
       <a class="nav-cta" href={REQUEST_CHEAT} rel="noopener">Request a cheat</a>
+      <a class="nav-icon" href={TELEGRAM} rel="noopener" aria-label="Join our Telegram group" title="Telegram">
+        <Icon name="telegram" size={18} />
+      </a>
+      <a class="nav-icon" href={MATRIX} rel="noopener" aria-label="Join our Matrix room" title="Matrix">
+        <Icon name="matrix" size={18} />
+      </a>
       <a class="nav-star" href={REPO} rel="noopener" aria-label="Star tint-cheats on GitHub">
         <Icon name="star" size={16} /> Star
       </a>

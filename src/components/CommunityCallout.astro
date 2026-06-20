@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { TELEGRAM, MATRIX } from '../utils/community';
+
+interface Props {
+  heading?: string;
+  blurb?: string;
+}
+
+const {
+  heading = 'Join the community',
+  blurb = 'Get update notifications, request tables, report breakage, and chat with other players. Pick whichever you prefer.',
+}: Props = Astro.props;
+---
+
+<aside class="community" aria-labelledby="community-heading">
+  <div class="community__body">
+    <Icon name="users" class="community__icon" size={26} />
+    <div>
+      <h2 id="community-heading" class="community__title">{heading}</h2>
+      <p class="community__blurb">{blurb}</p>
+    </div>
+  </div>
+  <div class="community__actions">
+    <a class="btn community__btn community__btn--tg" href={TELEGRAM} rel="noopener">
+      <Icon name="telegram" size={18} /> Telegram
+    </a>
+    <a class="btn community__btn community__btn--mx" href={MATRIX} rel="noopener">
+      <Icon name="matrix" size={18} /> Matrix
+    </a>
+  </div>
+</aside>
