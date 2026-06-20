@@ -14,8 +14,8 @@ game_versions:
 platforms: [Windows]
 singleplayer_only: true
 updated: 2026-06-20
-released: 2026-06-20
-tags: [action, rpg, unreal-engine, resources]
+released: 2026-06-08
+tags: [roguelite, bullet-heaven, autoshooter, action, rpg, resources]
 cheats:
   - name: "Unlimited Resources"
     hotkey: "F3"
@@ -23,14 +23,23 @@ cheats:
 files:
   - name: "tint-arms-of-god-1.2.1.ct"
     label: "Arms of God Trainer (v1.2.1)"
+cover: ./media/cover.jpg
+game_description: "Gear up for a battle through hell in this roguelite Bullet Heaven Arena Autoshooter with Doom-inspired gore vibes, metal music, and a satisfying combat feel. Wield five weapons at once, upgrade and merge them to forge indestructible builds, and bring divine justice to a world on the brink of chaos. By Dark Jay Studio (published by Dark Jay Studio / Galaktus)."
+trailer: "https://store.steampowered.com/app/3100310/Arms_of_God/"
+screenshots:
+  - ./media/screenshot-1.jpg
+  - ./media/screenshot-2.jpg
+  - ./media/screenshot-3.jpg
+  - ./media/screenshot-4.jpg
 description: "Free, open-source Cheat Engine table for Arms of God: lock all six resources to an editable value. Auto-attaches to the game and is fully hotkey driven."
 ---
 
 ## Overview
 
-A Cheat Engine table for **Arms of God** (Unreal Engine 5). It locks the six
-in-game resources — Ashes, Shards, Vows, Cores, Edicts and Relics — to a value
-you choose, so you can stop grinding currency and play the build you want.
+A Cheat Engine table for **Arms of God**, a roguelite bullet-heaven autoshooter
+(Unreal Engine 5). It locks the six in-game resources — Ashes, Shards, Vows,
+Cores, Edicts and Relics — to a value you choose, so you can stop grinding
+upgrade currency and forge the build you want.
 
 This is an early, single-function table (work in progress). The source is plain
 text in this repo, the file is checksummed, and there are no paywalls, surveys,
@@ -86,5 +95,5 @@ with your game version.
 ## Credits
 
 - Table by TINT (thereisnotime).
-- Arms of God by its respective developer and publisher. This table is unofficial
-  and not affiliated with them.
+- Arms of God by Dark Jay Studio (published by Dark Jay Studio / Galaktus). This
+  table is unofficial and not affiliated with the developers or publisher.
