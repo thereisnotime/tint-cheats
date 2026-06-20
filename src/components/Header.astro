@@ -2,7 +2,8 @@
 import { url } from '../utils/url';
 
 const REPO = 'https://github.com/thereisnotime/tint-cheats';
-const NEW_ISSUE = `${REPO}/issues/new/choose`;
+const REPORT_ISSUE = `${REPO}/issues/new?template=report-issue.yml`;
+const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
 ---
 
 <header class="site-header">
@@ -14,9 +15,11 @@ const NEW_ISSUE = `${REPO}/issues/new/choose`;
     <nav class="site-nav" aria-label="Primary">
       <a href={url('/')}>Home</a>
       <a href={url('/#tables')}>Tables</a>
-      <a href={REPO} rel="noopener">GitHub</a>
-      <a class="nav-cta" href={NEW_ISSUE} rel="noopener">Report issue</a>
-      <a class="nav-cta" href={NEW_ISSUE} rel="noopener">Request a cheat</a>
+      <a href={REPORT_ISSUE} rel="noopener">Report issue</a>
+      <a class="nav-cta" href={REQUEST_CHEAT} rel="noopener">Request a cheat</a>
+      <a class="nav-star" href={REPO} rel="noopener" aria-label="Star tint-cheats on GitHub">
+        <span aria-hidden="true">★</span> Star
+      </a>
     </nav>
   </div>
 </header>

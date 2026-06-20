@@ -14,6 +14,43 @@ singleplayer_only: true
 updated: 2026-06-20
 released: 2026-06-20
 tags: [roguelite, survival, shooter, unity, timer, ammo]
+cheats:
+  - name: "XP Boost"
+    hotkey: "F1"
+    description: "Multiplies XP gained per drop. Set the value to control how fast you level."
+  - name: "Ammo Lock"
+    hotkey: "F2"
+    description: "Locks ammo to infinite, or to a value you set."
+  - name: "Max Pickup Range"
+    hotkey: "F3"
+    description: "Greatly increases the pickup range for drops."
+  - name: "Soul Vacuum"
+    hotkey: "F4"
+    description: "Pulls in all souls and drops on the map."
+  - name: "Unlimited Souls"
+    hotkey: "F5"
+    description: "Keeps your soul count from dropping."
+  - name: "Freeze Hearts"
+    hotkey: "F6"
+    description: "Locks your current health (hearts)."
+  - name: "Freeze Timer"
+    hotkey: "F7"
+    description: "Stops the round timer from advancing."
+  - name: "Set Timer to X"
+    hotkey: "F8"
+    description: "Sets the round timer to a chosen number of seconds."
+  - name: "Speed Boost"
+    hotkey: "F9"
+    description: "Movement speed multiplier, configurable (default 4x)."
+  - name: "Rapid Fire + Boost Damage"
+    hotkey: "F10"
+    description: "Increases fire rate and damage."
+  - name: "One-Hit Enemies"
+    hotkey: "F11"
+    description: "Enemies die in a single hit."
+  - name: "Disable All Cheats"
+    hotkey: "F12"
+    description: "Turns every active script back off."
 files:
   - name: "minutes-till-dawn.CT"
     label: "Minutes Till Dawn Trainer (v1.7)"
@@ -31,25 +68,11 @@ All twelve functions are listed below with their default hotkeys. The source is
 plain text in this repo, the file is checksummed, and there is a VirusTotal link
 on this page so you can verify the download before running it.
 
-## Features
+## Notes
 
-| Cheat | Hotkey | Description |
-| --- | --- | --- |
-| XP Boost | F1 | Multiplies XP gained per drop. Set the value to control how fast you level. |
-| Ammo Lock | F2 | Locks ammo to infinite, or to a value you set. |
-| Max Pickup Range | F3 | Greatly increases pickup range for drops. |
-| Soul Vacuum | F4 | Pulls in all souls and drops on the map. |
-| Unlimited Souls | F5 | Keeps your soul count from dropping. |
-| Freeze Hearts | F6 | Locks your current health (hearts). |
-| Freeze Timer | F7 | Stops the round timer from advancing. |
-| Set Timer to X | F8 | Sets the round timer to a chosen number of seconds. |
-| Speed Boost | F9 | Movement speed multiplier, configurable (default 4x). |
-| Rapid Fire + Boost Damage | F10 | Increases fire rate and damage. |
-| One-Hit Enemies | F11 | Enemies die in a single hit. |
-| Disable All Cheats | F12 | Turns every active script back off. |
-
-Hotkeys map to F1 through F12 directly. You can change or remove any hotkey
-inside Cheat Engine if they clash with the game.
+The full cheat list with hotkeys is shown in the Cheats section above. Hotkeys
+map to F1 through F12 directly, and you can change or remove any of them inside
+Cheat Engine if they clash with the game.
 
 ## Requirements
 

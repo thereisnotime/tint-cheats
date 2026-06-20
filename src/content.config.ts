@@ -21,6 +21,11 @@ const tables = defineCollection({
     updated: z.coerce.date(),
     released: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
+    cheats: z.array(z.object({
+      name: z.string(),
+      hotkey: z.string().optional(),
+      description: z.string().optional(),
+    })).default([]),
     files: z.array(z.object({ name: z.string(), label: z.string() })).min(1),
     virustotal: z.string().url().optional(),
     cover: image().optional(),

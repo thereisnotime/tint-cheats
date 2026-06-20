@@ -7,6 +7,7 @@ import Disclaimer from '../components/Disclaimer.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import CompatibilityMatrix from '../components/CompatibilityMatrix.astro';
 import ChecksumBox from '../components/ChecksumBox.astro';
+import FeatureList from '../components/FeatureList.astro';
 import { url } from '../utils/url';
 
 interface Props {
@@ -88,6 +89,17 @@ const ogImage = data.cover?.src;
       )
     }
   </header>
+
+  {
+    data.cheats.length > 0 && (
+      <section class="section" aria-labelledby="cheats-title">
+        <h2 id="cheats-title" class="section__title">
+          Cheats <span class="section__count">{data.cheats.length}</span>
+        </h2>
+        <FeatureList cheats={data.cheats} />
+      </section>
+    )
+  }
 
   <section class="section" aria-labelledby="compat-title">
     <h2 id="compat-title" class="section__title">Compatibility</h2>

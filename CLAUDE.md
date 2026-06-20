@@ -6,7 +6,7 @@ Open-source collection of Cheat Engine tables for single-player games, built wit
 
 - GitHub: `thereisnotime/tint-cheats`, branch `main`.
 - Live site: `https://thereisnotime.github.io/tint-cheats`.
-- Node pinned to `24.13.0` via asdf (`.tool-versions`).
+- Node pinned to `24.16.0` (current LTS "Krypton") via asdf (`.tool-versions`).
 
 ## Mental model
 

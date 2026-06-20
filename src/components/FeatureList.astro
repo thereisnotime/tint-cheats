@@ -1,0 +1,28 @@
+---
+interface Cheat {
+  name: string;
+  hotkey?: string;
+  description?: string;
+}
+interface Props {
+  cheats: Cheat[];
+}
+
+const { cheats }: Props = Astro.props;
+---
+
+<ul class="features" role="list">
+  {
+    cheats.map((cheat) => (
+      <li class="feature">
+        {cheat.hotkey && (
+          <kbd class="feature__key" aria-label={`Hotkey ${cheat.hotkey}`}>{cheat.hotkey}</kbd>
+        )}
+        <div class="feature__body">
+          <span class="feature__name">{cheat.name}</span>
+          {cheat.description && <span class="feature__desc">{cheat.description}</span>}
+        </div>
+      </li>
+    ))
+  }
+</ul>

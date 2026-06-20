@@ -18,6 +18,18 @@ released: 2026-06-20
 tags:
   - template
   - example
+# Cheats render as a rich, hotkey-labelled list in the "Cheats" section.
+# One entry per cheat. hotkey and description are optional but recommended.
+cheats:
+  - name: "Godmode"
+    hotkey: "F1"
+    description: "Player takes no damage. Disable before cutscenes if you see glitches."
+  - name: "Infinite Money"
+    hotkey: "F2"
+    description: "Currency never decreases when spending."
+  - name: "Infinite Stamina"
+    hotkey: "F3"
+    description: "Stamina bar stays full. Safe to leave on."
 files:
   - name: "sample-template.CT"
     label: "Sample table (v0.1.0)"
@@ -34,16 +46,12 @@ if the table is a work in progress, say so here.
 This folder is the canonical template. Copy it with `just new-table <slug> "<Game Name>"`,
 then replace everything below with the real details for your table.
 
-## Features
+## Notes
 
-List every cheat the table exposes. The table below renders nicely on the site and in the
-repo, so keep one row per cheat.
-
-| Cheat | Description | Hotkey | Notes |
-| --- | --- | --- | --- |
-| Godmode | Player takes no damage | F1 | Disable before cutscenes if you see glitches |
-| Infinite Money | Currency never decreases when spending | F2 | Re-enable after loading a save |
-| Infinite Stamina | Stamina bar stays full | F3 | Safe to leave on |
+List every cheat in the `cheats:` frontmatter above (name, hotkey, description). It
+renders as the "Cheats" section on the site, so you do not need a markdown table here.
+Use this space for anything that does not fit a single cheat row, such as combos,
+recommended toggles, or warnings.
 
 ## Requirements
 

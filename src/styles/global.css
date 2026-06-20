@@ -798,3 +798,397 @@ samp {
 .prose table tbody tr:nth-child(even) {
   background: color-mix(in srgb, var(--bg-subtle) 50%, transparent);
 }
+
+/* ==========================================================================
+   Components added in the design pass
+   ========================================================================== */
+
+/* List resets for grids/clouds */
+.grid,
+.tag-cloud,
+.features,
+.table-card__tags,
+.trust-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  margin-bottom: var(--space-6);
+  padding: var(--space-7) var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%),
+    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--ok) 12%, transparent), transparent 50%),
+    var(--bg-elev);
+  overflow: hidden;
+}
+.hero__title {
+  font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3rem);
+  margin-bottom: var(--space-4);
+  background: linear-gradient(120deg, var(--text), color-mix(in srgb, var(--accent) 75%, var(--text)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero__lead {
+  max-width: 46rem;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+
+/* --------------------------------------------------------------------------
+   Section bar (title + search)
+   -------------------------------------------------------------------------- */
+
+.section__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.section__title--bare {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.section__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6em;
+  padding: 0 0.4em;
+  margin-left: 0.35em;
+  font-size: 0.7em;
+  font-weight: 700;
+  vertical-align: middle;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+}
+
+/* --------------------------------------------------------------------------
+   Search
+   -------------------------------------------------------------------------- */
+
+.search {
+  position: relative;
+  flex: 1 1 18rem;
+  max-width: 24rem;
+  margin-left: auto;
+}
+.search__icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  pointer-events: none;
+}
+.search__input {
+  width: 100%;
+  padding: 0.6rem 0.9rem 0.6rem 2.5rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.search__input::placeholder {
+  color: var(--text-faint);
+}
+.search__input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.search__empty {
+  color: var(--text-muted);
+  padding: var(--space-5) 0;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Table grid + cards
+   -------------------------------------------------------------------------- */
+
+.grid.table-grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+}
+
+.table-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.table-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: var(--shadow);
+}
+.table-card__cover-link {
+  display: block;
+  aspect-ratio: 16 / 9;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+}
+.table-card__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.table-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  flex: 1 0 auto;
+}
+.table-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.table-card__version {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-faint);
+}
+.table-card__title {
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.3;
+}
+.table-card__title a {
+  color: var(--text);
+}
+.table-card__title a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+.table-card__game {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.table-card__desc {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.table-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+.table-card__foot {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+.tag--sm {
+  font-size: 0.72rem;
+  padding: 0.1em 0.55em;
+}
+
+/* --------------------------------------------------------------------------
+   Tag cloud
+   -------------------------------------------------------------------------- */
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.tag__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4em;
+  margin-left: 0.3em;
+  padding: 0 0.35em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-faint);
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+}
+
+/* --------------------------------------------------------------------------
+   Features / cheats list
+   -------------------------------------------------------------------------- */
+
+.features {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+}
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+.feature__key {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.6rem;
+  padding: 0.25rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+}
+.feature__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.feature__name {
+  font-weight: 600;
+  color: var(--text);
+}
+.feature__desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Trust list
+   -------------------------------------------------------------------------- */
+
+.trust-list {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+.trust-list li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.trust-list__icon {
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+.trust-list strong {
+  color: var(--text);
+}
+
+/* --------------------------------------------------------------------------
+   Star CTA
+   -------------------------------------------------------------------------- */
+
+.star-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin: var(--space-8) 0 var(--space-4);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--border));
+  background:
+    radial-gradient(120% 160% at 100% 0%, color-mix(in srgb, var(--warn) 14%, transparent), transparent 55%),
+    var(--bg-elev);
+}
+.star-cta__body {
+  flex: 1 1 22rem;
+}
+.star-cta__title {
+  margin-bottom: var(--space-2);
+}
+.star-cta__lead {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 42rem;
+}
+.btn--star {
+  background: linear-gradient(180deg, #f5b945, #e5a420);
+  color: #2a1d00;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: var(--space-3) var(--space-6);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+.btn--star:hover {
+  filter: brightness(1.05);
+  color: #2a1d00;
+  text-decoration: none;
+}
+
+/* Header star button */
+.nav-star {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  color: var(--warn) !important;
+  font-weight: 700;
+  border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--border));
+}
+.nav-star:hover {
+  background: var(--warn-bg) !important;
+  color: var(--warn) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Misc
+   -------------------------------------------------------------------------- */
+
+.empty-state {
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-elev);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+.breadcrumb {
+  margin-bottom: var(--space-3);
+  font-size: 0.9rem;
+}
+.breadcrumb a {
+  color: var(--text-muted);
+}

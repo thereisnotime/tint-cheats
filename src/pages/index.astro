@@ -5,6 +5,9 @@ import TableCard from '../components/TableCard.astro';
 import TrustBanner from '../components/TrustBanner.astro';
 import { url, SITE } from '../utils/url';
 
+const REPO = 'https://github.com/thereisnotime/tint-cheats';
+const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
+
 const tables = (await getCollection('tables')).sort(
   (a, b) => b.data.updated.valueOf() - a.data.updated.valueOf()
 );
@@ -87,18 +90,53 @@ const jsonLd = [
   </section>
 
   <section id="tables" class="section" aria-labelledby="tables-heading">
-    <h2 id="tables-heading" class="section__title">Latest tables</h2>
+    <div class="section__bar">
+      <h2 id="tables-heading" class="section__title section__title--bare">
+        Tables <span class="section__count">{tables.length}</span>
+      </h2>
+      {tables.length > 0 && (
+        <div class="search">
+          <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m21 21-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/></svg>
+          <input
+            type="search"
+            id="table-search"
+            class="search__input"
+            placeholder="Search by game, tag, or cheat…"
+            aria-label="Search tables"
+            autocomplete="off"
+          />
+        </div>
+      )}
+    </div>
+
     {tables.length === 0 ? (
       <p class="empty-state">
         No tables published yet. Want to contribute one?
-        <a href="https://github.com/thereisnotime/tint-cheats/issues/new/choose">Open an issue on GitHub</a>.
+        <a href={REQUEST_CHEAT} rel="noopener">Request a cheat on GitHub</a>.
       </p>
     ) : (
-      <ul class="grid table-grid" role="list">
-        {tables.map((entry) => (
-          <li><TableCard entry={entry} /></li>
-        ))}
-      </ul>
+      <>
+        <ul class="grid table-grid" role="list" id="table-list">
+          {tables.map((entry) => (
+            <li
+              class="table-grid__item"
+              data-search={[
+                entry.data.title,
+                entry.data.game,
+                entry.data.tags.join(' '),
+                entry.data.cheats.map((c) => c.name).join(' '),
+                entry.data.description,
+              ].join(' ').toLowerCase()}
+            >
+              <TableCard entry={entry} />
+            </li>
+          ))}
+        </ul>
+        <p class="search__empty" id="search-empty" hidden>
+          No tables match your search.
+          <a href={REQUEST_CHEAT} rel="noopener">Request this one</a>.
+        </p>
+      </>
     )}
   </section>
 
@@ -118,10 +156,44 @@ const jsonLd = [
   <section class="section" aria-labelledby="trust-heading">
     <h2 id="trust-heading" class="section__title">How it works</h2>
     <ul class="trust-list">
-      <li><strong>Verifiable.</strong> Tables live in a public GitHub repo. Inspect the diff and the source before you run anything.</li>
-      <li><strong>Checksums.</strong> Every downloadable file ships with a published checksum so you can confirm you got exactly what we built.</li>
-      <li><strong>VirusTotal.</strong> Files are scanned and the scan link is included on each table page.</li>
-      <li><strong>Single-player only.</strong> These are for offline play. We do not support online or competitive cheating.</li>
+      <li><span class="trust-list__icon" aria-hidden="true">🔍</span><div><strong>Verifiable.</strong> Tables live in a public GitHub repo. Inspect the diff and the source before you run anything.</div></li>
+      <li><span class="trust-list__icon" aria-hidden="true">🔐</span><div><strong>Checksums.</strong> Every downloadable file ships with a published SHA-256 so you can confirm you got exactly what we built.</div></li>
+      <li><span class="trust-list__icon" aria-hidden="true">🛡️</span><div><strong>VirusTotal.</strong> Files are scanned and the scan link is included on each table page.</div></li>
+      <li><span class="trust-list__icon" aria-hidden="true">🎮</span><div><strong>Single-player only.</strong> These are for offline play. We do not support online or competitive cheating.</div></li>
     </ul>
   </section>
+
+  <section class="star-cta" aria-labelledby="star-heading">
+    <div class="star-cta__body">
+      <h2 id="star-heading" class="star-cta__title">Did a table save you some grinding?</h2>
+      <p class="star-cta__lead">
+        Stars keep this project visible above the survey-gate scam sites and help
+        more people find tables they can actually trust. It is free and takes a second.
+      </p>
+    </div>
+    <a class="btn btn--star" href={REPO} rel="noopener">
+      <span aria-hidden="true">★</span> Star on GitHub
+    </a>
+  </section>
 </Base>
+
+<script>
+  const input = document.getElementById('table-search') as HTMLInputElement | null;
+  const list = document.getElementById('table-list');
+  const emptyMsg = document.getElementById('search-empty');
+  if (input && list) {
+    const items = Array.from(list.querySelectorAll<HTMLElement>('.table-grid__item'));
+    const apply = () => {
+      const q = input.value.trim().toLowerCase();
+      let visible = 0;
+      for (const item of items) {
+        const hay = item.dataset.search ?? '';
+        const match = q === '' || hay.includes(q);
+        item.hidden = !match;
+        if (match) visible++;
+      }
+      if (emptyMsg) emptyMsg.hidden = visible !== 0;
+    };
+    input.addEventListener('input', apply);
+  }
+</script>
