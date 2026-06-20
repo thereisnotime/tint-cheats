@@ -54,7 +54,7 @@ install:
 new-table slug game:
     #!/usr/bin/env bash
     set -euo pipefail
-    src="tables/sample-template"
+    src="templates/sample-table"
     dst="tables/{{slug}}"
     if [[ ! -d "$src" ]]; then
         printf "{{RED}}error:{{RESET}} template %s not found\n" "$src" >&2

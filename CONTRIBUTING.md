@@ -26,7 +26,7 @@ Thanks for wanting to add a table. The process is short.
 
 ## The template is the reference
 
-`tables/sample-template/index.md` is the canonical example. Every field and
+`templates/sample-table/index.md` is the canonical example. Every field and
 section is shown there with inline comments explaining what to write. When you
 run `just new-table`, you get a copy of it. The fastest path is: open it, read
 the comments, and replace the values with yours.
