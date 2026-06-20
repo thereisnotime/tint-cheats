@@ -90,6 +90,10 @@ preview:
     npm run build
     npm run preview
 
+# VALIDATE: lint .ct files for BOM + XML well-formedness (CE-openability)
+check-ct:
+    python3 scripts/check-ct.py
+
 # VALIDATE: structural checks on table folders and frontmatter
 validate:
     npm run validate
@@ -100,6 +104,7 @@ check:
 
 # VALIDATE: run validate + check together
 lint:
+    python3 scripts/check-ct.py
     npm run validate
     npm run check
 
