@@ -56,7 +56,8 @@ cheats:
 files:
   - name: "minutes-till-dawn.CT"
     label: "20 Minutes Till Dawn Trainer (v1.7)"
-cover: ./media/cover.png
+cover: ./media/cover.jpg
+game_logo: ./media/logo.png
 game_description: "20 Minutes Till Dawn is a survival roguelite where endless hordes of creatures lurk from the dark. Craft overpowering builds and eradicate waves of Lovecraftian nightmares. Will you survive the night? By flanne (published by flanne / Erabit)."
 trailer: "https://store.steampowered.com/app/1966900/20_Minutes_Till_Dawn/"
 screenshots:
