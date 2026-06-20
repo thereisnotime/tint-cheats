@@ -1,0 +1,55 @@
+---
+interface GameVersion {
+  version: string;
+  store: string;
+  build_id?: string;
+  tested: boolean;
+}
+
+interface Props {
+  gameVersions: GameVersion[];
+}
+
+const { gameVersions = [] }: Props = Astro.props;
+const hasData = gameVersions.length > 0;
+---
+
+{
+  hasData ? (
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <caption>Tested game versions and stores</caption>
+        <thead>
+          <tr>
+            <th scope="col">Game Version</th>
+            <th scope="col">Store</th>
+            <th scope="col">Build</th>
+            <th scope="col">Tested</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gameVersions.map((gv) => (
+            <tr>
+              <td>{gv.version}</td>
+              <td>{gv.store}</td>
+              <td>{gv.build_id ? <code>{gv.build_id}</code> : '—'}</td>
+              <td>
+                {gv.tested ? (
+                  <span class="is-tested">
+                    <span aria-hidden="true">✅</span> Tested
+                  </span>
+                ) : (
+                  <span class="is-untested">
+                    <span aria-hidden="true">⚠️</span> Untested
+                  </span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p class="muted-note">No version data yet.</p>
+  )
+}

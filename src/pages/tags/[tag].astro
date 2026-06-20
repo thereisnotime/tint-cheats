@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TableCard from '../../components/TableCard.astro';
+import { url, SITE } from '../../utils/url';
+
+export const getStaticPaths = (async () => {
+  const tables = await getCollection('tables');
+  const byTag = new Map<string, typeof tables>();
+  for (const entry of tables) {
+    for (const tag of entry.data.tags) {
+      const list = byTag.get(tag) ?? [];
+      list.push(entry);
+      byTag.set(tag, list);
+    }
+  }
+  return [...byTag.entries()].map(([tag, entries]) => ({
+    params: { tag },
+    props: {
+      tag,
+      entries: entries.sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf()),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { tag, entries } = Astro.props;
+
+const title = `${tag} Cheat Engine Tables | tint-cheats`;
+const description = `Free, open-source Cheat Engine tables and trainers tagged "${tag}". Checksum-verified and VirusTotal-scanned for single-player use.`;
+const canonical = new URL(url('/tags/' + tag), SITE).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${tag} Cheat Engine Tables`,
+    description,
+    url: canonical,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: entries.map((entry, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: entry.data.title,
+      url: new URL(url('/tables/' + entry.id), SITE).href,
+    })),
+  },
+];
+---
+
+<Base title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <section class="section">
+    <p class="breadcrumb"><a href={url('/')}>&larr; All tables</a></p>
+    <h1 class="section__title">Cheat Engine tables tagged &ldquo;{tag}&rdquo;</h1>
+    <ul class="grid table-grid" role="list">
+      {entries.map((entry) => (
+        <li><TableCard entry={entry} /></li>
+      ))}
+    </ul>
+  </section>
+</Base>

@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TableCard from '../components/TableCard.astro';
+import TrustBanner from '../components/TrustBanner.astro';
+import { url, SITE } from '../utils/url';
+
+const tables = (await getCollection('tables')).sort(
+  (a, b) => b.data.updated.valueOf() - a.data.updated.valueOf()
+);
+
+// Unique, sorted tag cloud.
+const tagCounts = new Map<string, number>();
+for (const entry of tables) {
+  for (const tag of entry.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+const title = 'Cheat Engine Tables & Trainers — Free & Open Source | tint-cheats';
+const description =
+  'Free, open-source Cheat Engine tables and trainers for single-player games. Every table is version-controlled, checksum-verified, and VirusTotal-scanned. No paywalls, no shady downloads.';
+const canonical = new URL(url('/'), SITE).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Cheat Engine Tables & Trainers',
+    description,
+    url: canonical,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: tables.map((entry, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: entry.data.title,
+      url: new URL(url('/tables/' + entry.id), SITE).href,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Are these Cheat Engine tables safe?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Every table is open source, hosted on GitHub, checksum-verified, and scanned with VirusTotal. You can read the source before running it. We never bundle installers, loaders, or ad-gated downloads.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Are the tables free?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Everything here is completely free and open source. There are no paywalls, surveys, or premium tiers.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do the tables work in online or multiplayer games?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No. These tables are intended for single-player and offline use only. Using them in online or multiplayer games can break the game, ruin it for others, and get your account banned.',
+        },
+      },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <section class="hero">
+    <h1 class="hero__title">Free &amp; Open-Source Cheat Engine Tables &amp; Trainers</h1>
+    <p class="hero__lead">
+      Hand-curated Cheat Engine tables for single-player games — every one
+      version-controlled, checksum-verified, and VirusTotal-scanned. No paywalls,
+      no survey-locked downloads, no malware-laden "trainers". Read the source,
+      check the hash, then play.
+    </p>
+    <TrustBanner />
+  </section>
+
+  <section id="tables" class="section" aria-labelledby="tables-heading">
+    <h2 id="tables-heading" class="section__title">Latest tables</h2>
+    {tables.length === 0 ? (
+      <p class="empty-state">
+        No tables published yet. Want to contribute one?
+        <a href="https://github.com/thereisnotime/tint-cheats/issues/new/choose">Open an issue on GitHub</a>.
+      </p>
+    ) : (
+      <ul class="grid table-grid" role="list">
+        {tables.map((entry) => (
+          <li><TableCard entry={entry} /></li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  {tags.length > 0 && (
+    <section class="section" aria-labelledby="tags-heading">
+      <h2 id="tags-heading" class="section__title">Browse by tag</h2>
+      <ul class="tag-cloud" role="list">
+        {tags.map(([tag, count]) => (
+          <li>
+            <a class="tag" href={url('/tags/' + tag)}>{tag} <span class="tag__count">{count}</span></a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section class="section" aria-labelledby="trust-heading">
+    <h2 id="trust-heading" class="section__title">How it works</h2>
+    <ul class="trust-list">
+      <li><strong>Verifiable.</strong> Tables live in a public GitHub repo. Inspect the diff and the source before you run anything.</li>
+      <li><strong>Checksums.</strong> Every downloadable file ships with a published checksum so you can confirm you got exactly what we built.</li>
+      <li><strong>VirusTotal.</strong> Files are scanned and the scan link is included on each table page.</li>
+      <li><strong>Single-player only.</strong> These are for offline play. We do not support online or competitive cheating.</li>
+    </ul>
+  </section>
+</Base>

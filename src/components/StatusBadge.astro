@@ -1,0 +1,23 @@
+---
+type Status = 'working' | 'outdated' | 'wip' | 'broken';
+
+interface Props {
+  status: Status;
+}
+
+const { status }: Props = Astro.props;
+
+const LABELS: Record<Status, string> = {
+  working: 'Working',
+  outdated: 'Outdated',
+  wip: 'Work in progress',
+  broken: 'Broken',
+};
+
+const label = LABELS[status] ?? status;
+---
+
+<span class={`badge badge--${status}`}>
+  <span class="sr-only">Status:</span>
+  {label}
+</span>

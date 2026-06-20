@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../utils/url';
+
+const title = 'Page not found (404) | tint-cheats';
+const description = 'The page you were looking for could not be found.';
+---
+
+<Base title={title} description={description} noindex={true}>
+  <section class="section error-page">
+    <h1 class="section__title">404 — Page not found</h1>
+    <p>
+      We couldn&rsquo;t find that table or page. It may have been moved, renamed,
+      or never existed.
+    </p>
+    <p class="error-page__actions">
+      <a class="btn" href={url('/')}>Back to all tables</a>
+      <a class="btn btn--ghost" href="https://github.com/thereisnotime/tint-cheats/issues/new/choose">
+        Report a broken link
+      </a>
+    </p>
+  </section>
+</Base>

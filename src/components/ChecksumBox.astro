@@ -1,0 +1,106 @@
+---
+import checksums from '../data/checksums.json';
+
+interface FileEntry {
+  name: string;
+  label: string;
+}
+
+interface Props {
+  files: FileEntry[];
+  folder: string;
+  virustotal?: string;
+}
+
+interface ChecksumRecord {
+  sha256?: string;
+  size?: number;
+  virustotal?: string;
+  raw?: string;
+  history?: string;
+}
+
+const { files = [], folder, virustotal }: Props = Astro.props;
+
+const RAW_BASE =
+  'https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables';
+const HISTORY_BASE =
+  'https://github.com/thereisnotime/tint-cheats/commits/main/tables';
+
+const checks = checksums as Record<string, ChecksumRecord>;
+
+function fmtSize(bytes?: number): string | null {
+  if (!bytes && bytes !== 0) return null;
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+const rows = files.map((file) => {
+  const key = `${folder}/${file.name}`;
+  const rec = checks[key] ?? {};
+  const sha = rec.sha256;
+  const rawUrl = rec.raw ?? `${RAW_BASE}/${folder}/${file.name}`;
+  const historyUrl = rec.history ?? `${HISTORY_BASE}/${folder}/${file.name}`;
+  const vt =
+    virustotal ??
+    rec.virustotal ??
+    (sha ? `https://www.virustotal.com/gui/file/${sha}` : null);
+  return {
+    label: file.label,
+    name: file.name,
+    sha,
+    size: fmtSize(rec.size),
+    rawUrl,
+    historyUrl,
+    vt,
+  };
+});
+---
+
+<div class="downloads">
+  {
+    rows.map((r) => (
+      <article class="dl-card">
+        <div class="dl-card__head">
+          <h3 class="dl-card__label">{r.label}</h3>
+          <span class="dl-card__file">{r.name}</span>
+        </div>
+
+        <dl class="dl-card__meta">
+          <div class="dl-card__row">
+            <dt class="dl-card__key">SHA-256</dt>
+            <dd class="dl-card__hash" class:list={[{ 'dl-card__hash--pending': !r.sha }]}>
+              {r.sha ?? 'pending'}
+            </dd>
+          </div>
+          {r.size && (
+            <div class="dl-card__row">
+              <dt class="dl-card__key">Size</dt>
+              <dd>{r.size}</dd>
+            </div>
+          )}
+        </dl>
+
+        <div class="dl-card__actions">
+          <a class="btn btn--primary" href={r.rawUrl} download rel="noopener">
+            <span aria-hidden="true">⬇</span> Download
+          </a>
+          {r.vt && (
+            <a class="btn btn--ghost" href={r.vt} rel="noopener">
+              Verify on VirusTotal
+            </a>
+          )}
+          <a class="link-quiet" href={r.historyUrl} rel="noopener">
+            View source / history
+          </a>
+        </div>
+
+        <p class="dl-card__nogate">
+          <span aria-hidden="true">✓</span> Direct download — no gates, no
+          redirects.
+        </p>
+      </article>
+    ))
+  }
+</div>

@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { url } from '../utils/url';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  entry: CollectionEntry<'tables'>;
+}
+
+const { entry } = Astro.props;
+const { title, game, status, table_version, description, tags, updated, cover } = entry.data;
+const href = url('/tables/' + entry.id);
+const updatedISO = updated.toISOString();
+const updatedLabel = updated.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<article class="card table-card">
+  <a class="table-card__cover-link" href={href} tabindex="-1" aria-hidden="true">
+    {cover ? (
+      <Image class="table-card__cover" src={cover} alt={`${game} cover art`} width={320} height={180} loading="lazy" />
+    ) : (
+      <img class="table-card__cover" src={url('/og-default.png')} alt="" width="320" height="180" loading="lazy" />
+    )}
+  </a>
+  <div class="table-card__body">
+    <div class="table-card__head">
+      <StatusBadge status={status} />
+      <span class="table-card__version" title="Table version">v{table_version}</span>
+    </div>
+    <h3 class="table-card__title">
+      <a href={href}>{title}</a>
+    </h3>
+    <p class="table-card__game">{game}</p>
+    <p class="table-card__desc">{description}</p>
+    {tags.length > 0 && (
+      <ul class="table-card__tags" aria-label="Tags">
+        {tags.slice(0, 5).map((tag) => (
+          <li><a class="tag tag--sm" href={url('/tags/' + tag)}>{tag}</a></li>
+        ))}
+      </ul>
+    )}
+    <footer class="table-card__foot">
+      <time datetime={updatedISO}>Updated {updatedLabel}</time>
+    </footer>
+  </div>
+</article>

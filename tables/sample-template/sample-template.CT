@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="44">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>0</ID>
+      <Description>"Example: Infinite Money (template - edit me)"</Description>
+      <VariableType>4 Bytes</VariableType>
+      <Address>00000000</Address>
+    </CheatEntry>
+  </CheatEntries>
+</CheatTable>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thereisnotime.github.io/tint-cheats/sitemap-index.xml

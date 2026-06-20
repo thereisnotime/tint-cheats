@@ -1,0 +1,76 @@
+name: 🐞 Report a table issue
+description: A table is broken, outdated, or not working
+title: "[Issue]: "
+labels: ["bug", "table-issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. A quick reminder: these tables are for single-player/offline use only. We do not support or help with online/multiplayer use.
+  - type: input
+    id: game-name
+    attributes:
+      label: Game / table name
+      description: Which game or table is affected?
+    validations:
+      required: true
+  - type: input
+    id: table-version
+    attributes:
+      label: Table version
+      description: The table_version shown on the page.
+  - type: dropdown
+    id: store
+    attributes:
+      label: Store
+      options:
+        - Steam
+        - Epic
+        - GOG
+        - Game Pass
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: game-version
+    attributes:
+      label: Game version / build id
+  - type: input
+    id: ce-version
+    attributes:
+      label: Cheat Engine version
+  - type: dropdown
+    id: whats-wrong
+    attributes:
+      label: What's wrong
+      options:
+        - Crashes the game
+        - Values not found / pointers broken
+        - Script won't enable
+        - Outdated after game update
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happens
+    attributes:
+      label: What happens
+      description: Describe the problem in detail.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce the issue?
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: This is for single-player/offline use
+          required: true
+        - label: I verified the file checksum / downloaded from this repo
+          required: true
+        - label: I searched existing issues
+          required: true

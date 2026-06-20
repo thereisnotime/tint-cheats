@@ -1,0 +1,125 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { url, SITE } from '../utils/url';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonical?: string;
+  type?: 'website' | 'article';
+  jsonLd?: object | object[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  canonical,
+  type = 'website',
+  jsonLd,
+  noindex = false,
+}: Props = Astro.props;
+
+const SITE_NAME = 'tint-cheats';
+
+// Canonical: honor the configured base via Astro.site (falls back to SITE).
+const origin = Astro.site ?? new URL(SITE);
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, origin).href;
+
+// Resolve OG image to an absolute URL.
+const rawImage = image ?? url('/og-default.png');
+const ogImage = rawImage.startsWith('http')
+  ? rawImage
+  : new URL(rawImage, origin).href;
+
+// Always-present site-wide structured data.
+const baseJsonLd: object[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: new URL(url('/'), origin).href,
+    description:
+      'Open-source Cheat Engine tables and trainers — free, checksummed, and VirusTotal-verified.',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE_NAME,
+    url: new URL(url('/'), origin).href,
+    sameAs: ['https://github.com/thereisnotime/tint-cheats'],
+  },
+];
+
+const pageJsonLd: object[] = jsonLd
+  ? Array.isArray(jsonLd)
+    ? jsonLd
+    : [jsonLd]
+  : [];
+
+const allJsonLd = [...baseJsonLd, ...pageJsonLd];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow" />
+      )
+    }
+    <meta name="theme-color" content="#0d1017" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={SITE_NAME} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Feeds & icons -->
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE_NAME} — RSS`}
+      href={url('/rss.xml')}
+    />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+
+    {
+      allJsonLd.map((obj) => (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(obj)}
+        />
+      ))
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" class="container">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,49 @@
+name: ✨ Request a cheat table
+description: Request a new table or new cheats for an existing one
+title: "[Request]: "
+labels: ["request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        These tables are for single-player/offline use only. Requests are no guarantee anything gets built, but PRs are always welcome.
+  - type: input
+    id: game-name
+    attributes:
+      label: Game name
+    validations:
+      required: true
+  - type: dropdown
+    id: store
+    attributes:
+      label: Store
+      options:
+        - Steam
+        - Epic
+        - GOG
+        - Game Pass
+        - Other
+  - type: input
+    id: game-version
+    attributes:
+      label: Game version / build id
+  - type: textarea
+    id: desired-cheats
+    attributes:
+      label: Desired cheats / features
+      description: What would you like the table to do?
+    validations:
+      required: true
+  - type: input
+    id: store-link
+    attributes:
+      label: Store / game link
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: This is for single-player/offline use only
+          required: true
+        - label: I searched existing tables and requests
+          required: true

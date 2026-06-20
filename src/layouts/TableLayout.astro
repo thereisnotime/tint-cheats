@@ -1,0 +1,113 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import TrustBanner from '../components/TrustBanner.astro';
+import Disclaimer from '../components/Disclaimer.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import CompatibilityMatrix from '../components/CompatibilityMatrix.astro';
+import ChecksumBox from '../components/ChecksumBox.astro';
+import { url } from '../utils/url';
+
+interface Props {
+  entry: CollectionEntry<'tables'>;
+  jsonLd?: object | object[];
+}
+
+const { entry, jsonLd }: Props = Astro.props;
+const data = entry.data;
+
+const dateFmt = new Intl.DateTimeFormat('en', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+
+const updatedLabel = dateFmt.format(data.updated);
+const updatedIso = data.updated.toISOString();
+
+// OG image: pass the resolved cover src when present, else let Base default.
+const ogImage = data.cover?.src;
+---
+
+<Base
+  title={data.title}
+  description={data.description}
+  image={ogImage}
+  type="article"
+  jsonLd={jsonLd}
+>
+  <TrustBanner />
+
+  <header class="table-head">
+    <h1>{data.title}</h1>
+    <div class="table-head__meta">
+      <StatusBadge status={data.status} />
+      <span class="meta-item">
+        <span class="sr-only">Game</span>
+        {data.game}
+      </span>
+      <span class="meta-item">
+        <dt>Table</dt><dd>v{data.table_version}</dd>
+      </span>
+      <span class="meta-item">
+        <dt>Cheat Engine</dt><dd>{data.ce_version}</dd>
+      </span>
+      <span class="meta-item">
+        <dt>Platforms</dt><dd>{data.platforms.join(', ')}</dd>
+      </span>
+      <span class="meta-item">
+        <dt>Updated</dt>
+        <dd><time datetime={updatedIso}>{updatedLabel}</time></dd>
+      </span>
+    </div>
+
+    {
+      data.tags.length > 0 && (
+        <div class="table-head__tags">
+          {data.tags.map((tag) => (
+            <a class="tag" href={url('/tags/' + tag)}>
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      data.cover && (
+        <div class="table-head__cover">
+          <Image
+            src={data.cover}
+            alt={`${data.title} cover`}
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 64rem) 100vw, 64rem"
+            loading="eager"
+          />
+        </div>
+      )
+    }
+  </header>
+
+  <section class="section" aria-labelledby="compat-title">
+    <h2 id="compat-title" class="section__title">Compatibility</h2>
+    <CompatibilityMatrix gameVersions={data.game_versions} />
+  </section>
+
+  <section class="section" aria-labelledby="dl-title">
+    <h2 id="dl-title" class="section__title">Downloads</h2>
+    <ChecksumBox
+      files={data.files}
+      folder={entry.id}
+      virustotal={data.virustotal}
+    />
+  </section>
+
+  <section class="section">
+    <div class="prose">
+      <slot />
+    </div>
+  </section>
+
+  <Disclaimer singleplayerOnly={data.singleplayer_only} />
+</Base>

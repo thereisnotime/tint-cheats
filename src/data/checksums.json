@@ -1,0 +1,9 @@
+{
+  "sample-template/sample-template.CT": {
+    "sha256": "2e746c4842a84c49c833be6f5d6de06611f7d2e0bccc29db1dad2aefb85ff48b",
+    "size": 339,
+    "virustotal": "https://www.virustotal.com/gui/file/2e746c4842a84c49c833be6f5d6de06611f7d2e0bccc29db1dad2aefb85ff48b",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/sample-template/sample-template.CT",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/sample-template/sample-template.CT"
+  }
+}
