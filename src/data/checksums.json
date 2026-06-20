@@ -1,4 +1,11 @@
 {
+  "minutes-till-dawn/minutes-till-dawn.CT": {
+    "sha256": "97303f375c0850e2b845d01985884e4bbbfc3706f7e679f31ad2e15bf1ce9cef",
+    "size": 29879,
+    "virustotal": "https://www.virustotal.com/gui/file/97303f375c0850e2b845d01985884e4bbbfc3706f7e679f31ad2e15bf1ce9cef",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/minutes-till-dawn/minutes-till-dawn.CT",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/minutes-till-dawn/minutes-till-dawn.CT"
+  },
   "sample-template/sample-template.CT": {
     "sha256": "2e746c4842a84c49c833be6f5d6de06611f7d2e0bccc29db1dad2aefb85ff48b",
     "size": 339,

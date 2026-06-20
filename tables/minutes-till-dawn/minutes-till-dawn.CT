@@ -1,0 +1,888 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="40">
+  <CheatEntries>
+
+    <CheatEntry>
+      <ID>10</ID>
+      <Description>MinutesTillDawn Trainer v1.7  by TINT</Description>
+      <Color>808080</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0" moDeactivateChildrenAsWell="1"/>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>13</ID>
+      <Description>[ F1 ]  XP Boost (set value per drop)</Description>
+      <Color>00FF80</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>112</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local input = inputQuery("XP Boost", "XP per drop (blank = 50):", "")
+local xpVal = (input and input ~= "") and tonumber(input) or 50
+if not xpVal or xpVal < 1 then xpVal = 50 end
+
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+_MTD_xpVal = xpVal
+_MTD_xpCls = mono_findClass("", "Pickup")
+
+local function boostXP()
+  if not _MTD_xpCls then _MTD_xpCls = mono_findClass("", "Pickup") end
+  if not _MTD_xpCls then return end
+  local ok, insts = pcall(mono_class_findInstancesOfClassListOnly, "", _MTD_xpCls)
+  if not ok or not insts then return end
+  for i = 1, #insts do
+    pcall(writeFloat, getAddress(insts[i]) + 40, _MTD_xpVal)
+  end
+end
+boostXP()
+
+_MTD_xpTimer = createTimer(nil, false)
+_MTD_xpTimer.Interval = 500
+_MTD_xpTimer.OnTimer = function()
+  if not MTD_inRun() then return end
+  boostXP()
+end
+_MTD_xpTimer.Enabled = true
+
+MainForm.Caption = "MinutesTillDawn Trainer  [XP=" .. xpVal .. "]"
+
+[DISABLE]
+if _MTD_xpTimer then _MTD_xpTimer.destroy() _MTD_xpTimer = nil end
+_MTD_xpCls = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>12</ID>
+      <Description>[ F2 ]  Ammo Lock (infinite or set value)</Description>
+      <Color>00FF80</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>113</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local input = inputQuery("Ammo Lock", "Lock ammo at (blank = max ammo):", "")
+local lockVal = (input and input ~= "") and tonumber(input) or nil
+if lockVal and (lockVal &lt; 1 or lockVal &gt; 999999) then lockVal = nil end
+
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+-- Ammo.infiniteAmmo @64 (bool)  &lt;amount&gt;k__BackingField @72 (int)
+-- Ammo.gun @24 -&gt; Gun.gunData @56 -&gt; GunData.maxAmmo @96
+_MTD_amCls  = mono_findClass("", "Ammo")
+_MTD_amBase = nil
+_MTD_amLock = lockVal  -- nil = use maxAmmo each tick
+
+local function refreshAm()
+  if not _MTD_amCls then _MTD_amCls = mono_findClass("", "Ammo") end
+  if not _MTD_amCls then return end
+  local insts = mono_class_findInstancesOfClassListOnly("", _MTD_amCls)
+  if insts and #insts > 0 then _MTD_amBase = getAddress(insts[1]) end
+end
+refreshAm()
+
+_MTD_amTimer = createTimer(nil, false)
+_MTD_amTimer.Interval = 100
+_MTD_amTimer.OnTimer = function()
+  if not MTD_inRun() then _MTD_amBase = nil return end
+  if not _MTD_amBase then refreshAm() end
+  if not _MTD_amBase then return end
+  local val = _MTD_amLock
+  if not val then
+    val = 9999
+    local ok, gunPtr = pcall(readPointer, _MTD_amBase + 24)
+    if ok and gunPtr and gunPtr > 0x10000 then
+      local ok2, gdPtr = pcall(readPointer, gunPtr + 56)
+      if ok2 and gdPtr and gdPtr > 0x10000 then
+        local ok3, mx = pcall(readInteger, gdPtr + 96)
+        if ok3 and mx and mx > 0 then val = mx end
+      end
+    end
+  end
+  pcall(writeBytes, _MTD_amBase + 64, 1)
+  pcall(writeInteger, _MTD_amBase + 72, val)
+end
+_MTD_amTimer.Enabled = true
+
+local label = lockVal and ("AMMO LOCKED=" .. lockVal) or "AMMO INFINITE"
+MainForm.Caption = "MinutesTillDawn Trainer  [" .. label .. "]"
+
+[DISABLE]
+if _MTD_amTimer then _MTD_amTimer.destroy() _MTD_amTimer = nil end
+_MTD_amCls  = nil
+_MTD_amBase = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>9</ID>
+      <Description>[ F3 ]  Max Pickup Range</Description>
+      <Color>00FF80</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>114</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+-- PickupRange = StatType 17. The game stores a StatMod per stat type in a contiguous
+-- array of 22 StatMod objects (stride 0x30). Writing a large _multiplierBonus @28
+-- makes the engine compute baseRange * (1 + 99999) = effectively infinite.
+-- We locate the array each run by finding the first block of 22 consecutive StatMods.
+_MTD_prSmAddr = nil
+
+local function findPrStatMod()
+  local smCls = mono_findClass("","StatMod")
+  if not smCls then return end
+  local insts = mono_class_findInstancesOfClassListOnly("",smCls)
+  if not insts or #insts &lt; 22 then return end
+  for i=1,#insts-21 do
+    local base = getAddress(insts[i])
+    local ok2 = true
+    for j=1,21 do
+      if getAddress(insts[i+j]) - base ~= j*0x30 then ok2=false break end
+    end
+    if ok2 then _MTD_prSmAddr = base + 17*0x30 break end
+  end
+end
+findPrStatMod()
+
+_MTD_prTimer = createTimer(nil, false)
+_MTD_prTimer.Interval = 500
+_MTD_prTimer.OnTimer = function()
+  if not MTD_inRun() then _MTD_prSmAddr = nil return end
+  if not _MTD_prSmAddr then findPrStatMod() end
+  if _MTD_prSmAddr then pcall(writeFloat, _MTD_prSmAddr + 28, 99999.0) end
+end
+_MTD_prTimer.Enabled = true
+if _MTD_prSmAddr then pcall(writeFloat, _MTD_prSmAddr + 28, 99999.0) end
+
+MainForm.Caption = "MinutesTillDawn Trainer  [MAX PICKUP RANGE]"
+
+[DISABLE]
+if _MTD_prTimer then _MTD_prTimer.destroy() _MTD_prTimer = nil end
+if _MTD_prSmAddr then pcall(writeFloat, _MTD_prSmAddr + 28, 0.0) end
+_MTD_prSmAddr = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>11</ID>
+      <Description>[ F4 ]  Soul Vacuum (collect all drops)</Description>
+      <Color>00FF80</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>115</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+-- Runtime souls counter: same address F5 uses (SaveSystem static base +24)
+local classSS = mono_findClass("", "SaveSystem")
+if not classSS or classSS == 0 then error("SaveSystem class not found") end
+local soulsAddr = mono_class_getStaticFieldAddress("", classSS) + 24
+
+-- Count non-pooled Pickup instances (x != 0 means spawned/active, not fresh pool).
+-- Add their count directly to the souls counter. No position writes -- touching physics
+-- memory directly causes a crash when the engine spawns a new pickup from the pool.
+local pkCls = mono_findClass("", "Pickup")
+if not pkCls then error("Pickup class not found") end
+local pkInsts = mono_class_findInstancesOfClassListOnly("", pkCls)
+local vacuumed = 0
+if pkInsts then
+  for i = 1, #pkInsts do
+    local base   = getAddress(pkInsts[i])
+    local native = readPointer(base + 16)
+    if native and native ~= 0 then
+      local ptr48 = readPointer(native + 48)
+      if ptr48 and ptr48 ~= 0 then
+        local x = readFloat(ptr48 + 96)
+        if x and math.abs(x) > 0.001 then
+          vacuumed = vacuumed + 1
+        end
+      end
+    end
+  end
+end
+
+local cur = readInteger(soulsAddr) or 0
+writeInteger(soulsAddr, cur + vacuumed)
+print("[MTD] Soul vacuum: +" .. vacuumed .. " souls")
+MainForm.Caption = "MinutesTillDawn Trainer  [VACUUM: +" .. vacuumed .. " souls]"
+
+[DISABLE]
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>[ F5 ]  Unlimited Souls</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>116</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then
+  error("Mono collector failed - is MinutesTillDawn.exe running?")
+end
+
+local classSS = mono_findClass("", "SaveSystem")
+if not classSS or classSS == 0 then
+  error("SaveSystem class not found")
+end
+
+-- Souls: hidden static Int32 at SaveSystem static base +24
+-- (not SaveData.points which is the serialized copy)
+local staticBase = mono_class_getStaticFieldAddress("", classSS)
+_MTD_goldAddr = staticBase + 24
+
+_MTD_timer = createTimer(nil, false)
+_MTD_timer.Interval = 250
+_MTD_timer.OnTimer = function()
+  if _MTD_goldAddr then writeInteger(_MTD_goldAddr, 99999999) end
+end
+_MTD_timer.Enabled = true
+writeInteger(_MTD_goldAddr, 99999999)
+
+MainForm.Caption = "MinutesTillDawn Trainer  [SOULS FROZEN]"
+
+[DISABLE]
+if _MTD_timer then _MTD_timer.destroy() _MTD_timer = nil end
+_MTD_goldAddr = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>[ F6 ]  Freeze Hearts</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>117</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then
+  error("Mono collector failed - is MinutesTillDawn.exe running?")
+end
+
+-- Class may be nil if enabled from menu; timer re-discovers on run start.
+_MTD_hpCls  = mono_findClass("", "PlayerHealth")
+_MTD_hpBase = nil
+_MTD_hpTick = 0
+
+local function refreshHp()
+  if not _MTD_hpCls then _MTD_hpCls = mono_findClass("", "PlayerHealth") end
+  if not _MTD_hpCls then return end
+  local insts = mono_class_findInstancesOfClassListOnly("", _MTD_hpCls)
+  if insts and #insts > 0 then _MTD_hpBase = getAddress(insts[1]) end
+end
+refreshHp()
+
+_MTD_hpTimer = createTimer(nil, false)
+_MTD_hpTimer.Interval = 16
+_MTD_hpTimer.OnTimer = function()
+  if not MTD_inRun() then _MTD_hpBase = nil return end
+  _MTD_hpTick = (_MTD_hpTick or 0) + 1
+  if _MTD_hpTick % 20 == 0 or not _MTD_hpBase then refreshHp() end
+  if not _MTD_hpBase then return end
+  pcall(writeBytes, _MTD_hpBase + 120, 1)  -- isInvincible = true
+  local mx = readInteger(_MTD_hpBase + 144)
+  if mx and mx > 0 then writeInteger(_MTD_hpBase + 148, mx) end
+end
+_MTD_hpTimer.Enabled = true
+if _MTD_hpBase then
+  pcall(writeBytes, _MTD_hpBase + 120, 1)
+  writeInteger(_MTD_hpBase + 148, readInteger(_MTD_hpBase + 144))
+end
+
+MainForm.Caption = "MinutesTillDawn Trainer  [HEARTS FROZEN]"
+
+[DISABLE]
+if _MTD_hpTimer then _MTD_hpTimer.destroy() _MTD_hpTimer = nil end
+_MTD_hpCls  = nil
+_MTD_hpBase = nil
+_MTD_hpTick = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>[ F7 ]  Freeze Timer</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>118</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then
+  error("Mono collector failed - is MinutesTillDawn.exe running?")
+end
+
+_MTD_timerCls  = mono_findClass("", "GameTimer")
+_MTD_timerBase = nil
+_MTD_timerVal  = nil
+_MTD_timerTick = 0
+
+local function refreshGt()
+  if not _MTD_timerCls then _MTD_timerCls = mono_findClass("", "GameTimer") end
+  if not _MTD_timerCls then return end
+  local insts = mono_class_findInstancesOfClassListOnly("", _MTD_timerCls)
+  if insts and #insts > 0 then
+    local newBase = getAddress(insts[1])
+    if newBase ~= _MTD_timerBase then
+      _MTD_timerBase = newBase
+      _MTD_timerVal  = readFloat(newBase + 32)
+    end
+  end
+end
+refreshGt()
+
+_MTD_timerTimer = createTimer(nil, false)
+_MTD_timerTimer.Interval = 50
+_MTD_timerTimer.OnTimer = function()
+  if not MTD_inRun() then _MTD_timerBase = nil return end
+  _MTD_timerTick = (_MTD_timerTick or 0) + 1
+  if _MTD_timerTick % 20 == 0 or not _MTD_timerBase then refreshGt() end
+  if _MTD_timerBase and _MTD_timerVal then
+    writeFloat(_MTD_timerBase + 32, _MTD_timerVal)
+  end
+end
+_MTD_timerTimer.Enabled = true
+if _MTD_timerBase and _MTD_timerVal then
+  writeFloat(_MTD_timerBase + 32, _MTD_timerVal)
+end
+
+MainForm.Caption = "MinutesTillDawn Trainer  [TIMER FROZEN]"
+
+[DISABLE]
+if _MTD_timerTimer then _MTD_timerTimer.destroy() _MTD_timerTimer = nil end
+_MTD_timerCls  = nil
+_MTD_timerBase = nil
+_MTD_timerVal  = nil
+_MTD_timerTick = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>[ F8 ]  Set Timer to X seconds</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>119</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local input = inputQuery("Set Timer", "Seconds:", "30")
+if not input or input == "" then
+  local mr = getAddressList().getMemoryRecord(3)
+  if mr then mr.Active = false end
+  return
+end
+local val = tonumber(input)
+if not val or val &lt; 0 then
+  showMessage("Invalid value.")
+  local mr = getAddressList().getMemoryRecord(3)
+  if mr then mr.Active = false end
+  return
+end
+
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+_MTD_stCls    = mono_findClass("", "GameTimer")
+_MTD_stBase   = nil
+_MTD_stFrozen = val
+_MTD_stTick   = 0
+
+local function refreshSt()
+  if not _MTD_stCls then _MTD_stCls = mono_findClass("", "GameTimer") end
+  if not _MTD_stCls then return end
+  local insts = mono_class_findInstancesOfClassListOnly("", _MTD_stCls)
+  if insts and #insts > 0 then _MTD_stBase = getAddress(insts[1]) end
+end
+refreshSt()
+
+_MTD_setTimerTimer = createTimer(nil, false)
+_MTD_setTimerTimer.Interval = 50
+_MTD_setTimerTimer.OnTimer = function()
+  if not MTD_inRun() then _MTD_stBase = nil return end
+  _MTD_stTick = (_MTD_stTick or 0) + 1
+  if _MTD_stTick % 20 == 0 or not _MTD_stBase then refreshSt() end
+  if _MTD_stBase and _MTD_stFrozen then
+    writeFloat(_MTD_stBase + 32, _MTD_stFrozen)
+  end
+end
+_MTD_setTimerTimer.Enabled = true
+if _MTD_stBase then writeFloat(_MTD_stBase + 32, val) end
+
+MainForm.Caption = "MinutesTillDawn Trainer  [TIMER SET: " .. val .. "s]"
+
+[DISABLE]
+if _MTD_setTimerTimer then _MTD_setTimerTimer.destroy() _MTD_setTimerTimer = nil end
+_MTD_stCls    = nil
+_MTD_stBase   = nil
+_MTD_stFrozen = nil
+_MTD_stTick   = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>5</ID>
+      <Description>[ F9 ]  Speed Boost (configurable, default 4x)</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>120</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local mult = 4.0
+
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+-- Class may be nil if enabled from menu; applySpeed re-discovers on run start.
+_MTD_speedCls  = mono_findClass("", "PlayerController")
+_MTD_speedMult = mult
+_MTD_speedOrig = {}
+
+local function applySpeed()
+  if not MTD_inRun() then return end
+  if not _MTD_speedCls then _MTD_speedCls = mono_findClass("", "PlayerController") end
+  if not _MTD_speedCls then return end
+  local insts = mono_class_findInstancesOfClassListOnly("", _MTD_speedCls)
+  if not insts then return end
+  for i = 1, #insts do
+    local addr = getAddress(insts[i]) + 208
+    if not _MTD_speedOrig[addr] then
+      local cur = readFloat(addr)
+      _MTD_speedOrig[addr] = (cur > 0.1 and cur &lt; 100) and cur or 3.0
+    end
+    writeFloat(addr, _MTD_speedOrig[addr] * (_MTD_speedMult or 4.0))
+  end
+end
+
+applySpeed()
+
+_MTD_speedTimer = createTimer(nil, false)
+_MTD_speedTimer.Interval = 250
+_MTD_speedTimer.OnTimer = applySpeed
+_MTD_speedTimer.Enabled = true
+
+MainForm.Caption = "MinutesTillDawn Trainer  [SPEED BOOST 4x]"
+
+[DISABLE]
+if _MTD_speedTimer then _MTD_speedTimer.destroy() _MTD_speedTimer = nil end
+if _MTD_speedOrig then
+  for addr, orig in pairs(_MTD_speedOrig) do writeFloat(addr, orig) end
+  _MTD_speedOrig = nil
+end
+_MTD_speedCls  = nil
+_MTD_speedMult = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>6</ID>
+      <Description>[ F10 ]  Rapid Fire + Boost Damage</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>121</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local dmgVal = 9999
+
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+local cls = mono_findClass("", "Gun")
+if not cls or cls == 0 then error("Gun class not found") end
+
+local instances = mono_class_findInstancesOfClassListOnly("", cls)
+if not instances or #instances == 0 then error("Gun instance not found - start a run first") end
+
+-- GunData (ScriptableObject) via Gun.gunData @56:
+--   damage @88  shotCooldown @92  maxAmmo @96 (int)  reloadDuration @100
+-- _MTD_rfOrig: gdPtr -> true originals (saved first time we see a GunData address).
+-- Validation: skip GunDatas where shotCooldown or maxAmmo look invalid/garbage.
+_MTD_rfCls  = cls
+_MTD_rfDmg  = dmgVal
+_MTD_rfOrig = {}
+
+local seen = {}
+for i = 1, #instances do
+  local base   = getAddress(instances[i])
+  local gdPtr  = readPointer(base + 56)
+  if gdPtr and gdPtr > 0x10000 and not seen[gdPtr] then
+    seen[gdPtr] = true
+    local cd = readFloat(gdPtr + 92)
+    local am = readInteger(gdPtr + 96)
+    if cd and cd >= 0.05 and cd &lt;= 5.0 and am and am >= 1 and am &lt;= 50 then
+      _MTD_rfOrig[gdPtr] = { cooldown=cd, maxAmmo=am, reload=readFloat(gdPtr+100), dmg=readFloat(gdPtr+88) }
+      writeFloat(gdPtr + 92, 0.01)
+      writeInteger(gdPtr + 96, 9999)
+      writeFloat(gdPtr + 100, 0.001)
+      writeFloat(gdPtr + 88, dmgVal)
+    end
+  end
+end
+
+_MTD_rfTimer = createTimer(nil, false)
+_MTD_rfTimer.Interval = 500
+_MTD_rfTimer.OnTimer = function()
+  if not MTD_inRun() then return end
+  if not _MTD_rfCls then return end
+  local insts = mono_class_findInstancesOfClassListOnly("", _MTD_rfCls)
+  if not insts then return end
+  local seen2 = {}
+  for i = 1, #insts do
+    local base  = getAddress(insts[i])
+    local gdPtr = readPointer(base + 56)
+    if gdPtr and gdPtr > 0x10000 and not seen2[gdPtr] then
+      seen2[gdPtr] = true
+      if not _MTD_rfOrig[gdPtr] then
+        local cd = readFloat(gdPtr + 92)
+        local am = readInteger(gdPtr + 96)
+        if cd and cd >= 0.05 and cd &lt;= 5.0 and am and am >= 1 and am &lt;= 50 then
+          _MTD_rfOrig[gdPtr] = { cooldown=cd, maxAmmo=am, reload=readFloat(gdPtr+100), dmg=readFloat(gdPtr+88) }
+        else
+          seen2[gdPtr] = nil  -- allow retry next tick if still invalid
+        end
+      end
+      if _MTD_rfOrig[gdPtr] then
+        writeFloat(gdPtr + 92, 0.01)
+        writeInteger(gdPtr + 96, 9999)
+        writeFloat(gdPtr + 100, 0.001)
+        writeFloat(gdPtr + 88, _MTD_rfDmg or 9999)
+      end
+    end
+  end
+end
+_MTD_rfTimer.Enabled = true
+
+MainForm.Caption = "MinutesTillDawn Trainer  [RAPID FIRE  DMG=" .. dmgVal .. "]"
+
+[DISABLE]
+if _MTD_rfTimer then _MTD_rfTimer.destroy() _MTD_rfTimer = nil end
+if _MTD_rfOrig then
+  for gdPtr, orig in pairs(_MTD_rfOrig) do
+    writeFloat(gdPtr + 92, orig.cooldown)
+    writeInteger(gdPtr + 96, orig.maxAmmo)
+    writeFloat(gdPtr + 100, orig.reload)
+    writeFloat(gdPtr + 88, orig.dmg)
+  end
+  _MTD_rfOrig = nil
+end
+_MTD_rfCls = nil
+_MTD_rfDmg = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>7</ID>
+      <Description>[ F11 ]  One-Hit Enemies</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>122</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+openProcess("MinutesTillDawn.exe")
+if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+
+-- Class may be nil if enabled from menu; timer re-discovers on run start.
+local function applyOneHit(insts)
+  if not insts then return end
+  for i = 1, #insts do
+    local base = getAddress(insts[i])
+    local hp = readInteger(base + 84)
+    if hp and hp &gt; 1 then writeInteger(base + 84, 1) end
+  end
+end
+
+_MTD_hkCls   = mono_findClass("", "Health")
+_MTD_hkInsts = _MTD_hkCls and mono_class_findInstancesOfClassListOnly("", _MTD_hkCls) or nil
+_MTD_hkTick  = 0
+applyOneHit(_MTD_hkInsts)
+
+_MTD_hkTimer = createTimer(nil, false)
+_MTD_hkTimer.Interval = 1000
+_MTD_hkTimer.OnTimer = function()
+  if not MTD_inRun() then _MTD_hkInsts = nil return end
+  _MTD_hkTick = (_MTD_hkTick or 0) + 1
+  if _MTD_hkTick % 5 == 0 then
+    if not _MTD_hkCls then _MTD_hkCls = mono_findClass("", "Health") end
+    if _MTD_hkCls then _MTD_hkInsts = mono_class_findInstancesOfClassListOnly("", _MTD_hkCls) end
+  end
+  applyOneHit(_MTD_hkInsts)
+end
+_MTD_hkTimer.Enabled = true
+
+MainForm.Caption = "MinutesTillDawn Trainer  [ONE-HIT ENEMIES ON]"
+
+[DISABLE]
+if _MTD_hkTimer then _MTD_hkTimer.destroy() _MTD_hkTimer = nil end
+_MTD_hkCls   = nil
+_MTD_hkInsts = nil
+_MTD_hkTick  = nil
+MainForm.Caption = "MinutesTillDawn Trainer"
+</AssemblerScript>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>8</ID>
+      <Description>[ F12 ]  Disable All Cheats</Description>
+      <Color>808080</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>123</Keys>
+          <ActivateSound>Deactivate</ActivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local al = getAddressList()
+for i = 0, al.Count - 1 do
+  local mr = al.getMemoryRecord(i)
+  pcall(function()
+    if mr and not mr.isGroupHeader then mr.Active = false end
+  end)
+end
+MainForm.Caption = "MinutesTillDawn Trainer  [ALL CHEATS OFF]"
+
+[DISABLE]
+</AssemblerScript>
+    </CheatEntry>
+
+  </CheatEntries>
+
+  <LuaScript>
+--[[ MinutesTillDawn Trainer v1.7  by TINT
+
+     Usage:
+       F5  / check "Unlimited Souls"            -- freeze souls at 99999999
+       F6  / check "Freeze Hearts"              -- freeze hearts at current max (works mid-run)
+       F7  / check "Freeze Timer"               -- freeze timer at the value it has when activated
+       F8  / check "Set Timer to X"             -- prompt for seconds, freeze at that value
+       F9  / check "Speed Boost (configurable)" -- prompt for multiplier (default 4x), works diagonally
+       F10 / check "Rapid Fire + Boost Damage"  -- prompt for damage (default 9999); rapid fire + max ammo
+       F11 / check "One-Hit Enemies"            -- write HP=1 to all live enemies every second (incl. trees)
+       F12 / check "Disable All Cheats"         -- panic key: disables every active cheat at once
+       F2  / check "Ammo Lock"                    -- sets infiniteAmmo flag + locks amount at custom/max value (100ms)
+       F3  / check "Max Pickup Range"            -- StatMod[17]._multiplierBonus = 99999x (locked 500ms)
+       F4  / check "Soul Vacuum"                -- teleports all non-pooled drops to player + adds souls direct
+
+     Table features:
+       - Auto-attaches to MinutesTillDawn.exe on load; polls every 2s if game not running.
+       - Auto-disables all active cheats when the game process exits.
+       - MTD_inRun() gates all timers: timers idle safely in menu/between runs, resume on run start.
+       - All cheats can be enabled from the menu — they self-arm and activate when a run starts.
+       - Sound feedback on every hotkey toggle.
+       - All cheats rescan for new instances on each tick (new runs / character switches work automatically).
+
+     Mono field reference:
+       SaveSystem static +24      -- runtime souls counter
+       PlayerHealth._hp +148      -- current HP  |  _maxHP +144
+       GameTimer backing field +32 -- run timer (float)
+       PlayerController.movementSpeed +208  -- base speed scalar
+       GunData.shotCooldown +92  damage +88  maxAmmo +96  reloadDuration +100
+       Health HP +84              -- enemy HP
+       StatsHolder (via PC->stats @80) -- small floats 0.3-6.0 include pickup range
+       Pickup native+48 -> ptr48+96/+100/+104 -- transform x/y/z (vacuum teleport target)
+       Ammo.infiniteAmmo @64 (bool)  &lt;amount&gt;k__BackingField @72 (int)  .gun @24
+       GunData.maxAmmo @96  .gun via Gun.gunData @56
+       SaveData.points @72        -- between-run souls (serialized copy; use static+24 for live)
+]]
+
+-- ── Auto-attach watchdog ─────────────────────────────────────────────────────
+-- Polls every 2s for MinutesTillDawn.exe.  Attaches when found.
+-- On game close: disables all active cheats and resets to "waiting" state.
+
+local _MTD_attached = false
+local _MTD_pid      = 0   -- PID we are currently attached to
+_MTD_pcStaticAddr   = nil -- PlayerController.Instance static ptr; nil = not yet found
+
+-- Returns true only when a run is active (PC.Instance != null).
+-- Lazy-inits _MTD_pcStaticAddr once per process attach via Mono reflection.
+-- Timers call this to skip writes while in menu / between runs.
+function MTD_inRun()
+  if not _MTD_pcStaticAddr then
+    local ok, cls = pcall(mono_findClass, "Assembly-CSharp", "PlayerController")
+    if not ok or not cls or cls == 0 then
+      ok, cls = pcall(mono_findClass, "", "PlayerController")
+    end
+    if not ok or not cls or cls == 0 then return false end
+    local ok2, fields = pcall(mono_class_enumFields, cls)
+    if not ok2 or not fields then return false end
+    for i = 1, #fields do
+      if fields[i].name == "Instance" and fields[i].staticAddress then
+        _MTD_pcStaticAddr = fields[i].staticAddress
+        break
+      end
+    end
+    if not _MTD_pcStaticAddr then return false end
+  end
+  local ok, ptr = pcall(readPointer, _MTD_pcStaticAddr)
+  return ok and ptr ~= nil and ptr ~= 0
+end
+
+local function MTD_disableAll()
+  local al = getAddressList()
+  for i = 0, al.Count - 1 do
+    local mr = al.getMemoryRecord(i)
+    pcall(function()
+      if mr and not mr.isGroupHeader then mr.Active = false end
+    end)
+  end
+  _MTD_pcStaticAddr = nil  -- force re-init on next process attach
+end
+
+local _MTD_watchTimer = createTimer(nil, false)
+_MTD_watchTimer.Interval = 2000
+_MTD_watchTimer.OnTimer = function()
+  local pid = getProcessIDFromProcessName("MinutesTillDawn.exe")
+  if pid and pid ~= 0 then
+    -- Re-attach if: first time, or the instance we were on exited and a new one took over
+    if not _MTD_attached or _MTD_pid ~= pid then
+      if _MTD_attached then MTD_disableAll() end   -- clean up stale cheats before switching
+      openProcess(pid)
+      _MTD_attached = true
+      _MTD_pid      = pid
+      MainForm.Caption = "MinutesTillDawn Trainer  [ATTACHED pid=" .. pid .. "]"
+    end
+  else
+    if _MTD_attached then
+      MTD_disableAll()
+      _MTD_attached = false
+      _MTD_pid      = 0
+      MainForm.Caption = "MinutesTillDawn Trainer  [WAITING FOR GAME...]"
+    end
+  end
+end
+_MTD_watchTimer.Enabled = true
+
+-- Try immediately on load
+local _pid0 = getProcessIDFromProcessName("MinutesTillDawn.exe")
+if _pid0 and _pid0 ~= 0 then
+  openProcess(_pid0)
+  _MTD_attached = true
+  _MTD_pid      = _pid0
+  MainForm.Caption = "MinutesTillDawn Trainer  [ATTACHED pid=" .. _pid0 .. "]"
+else
+  MainForm.Caption = "MinutesTillDawn Trainer  [WAITING FOR GAME...]"
+end
+  </LuaScript>
+</CheatTable>
