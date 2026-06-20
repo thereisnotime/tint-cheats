@@ -121,7 +121,7 @@ const jsonLd = [
     {tables.length === 0 ? (
       <p class="empty-state">
         No tables published yet. Want to contribute one?
-        <a href={REQUEST_CHEAT} rel="noopener">Request a cheat on GitHub</a>.
+        <a href={REQUEST_CHEAT} target="_blank" rel="noopener">Request a cheat on GitHub</a>.
       </p>
     ) : (
       <>
@@ -143,7 +143,7 @@ const jsonLd = [
         </ul>
         <p class="search__empty" id="search-empty" hidden>
           No tables match your search.
-          <a href={REQUEST_CHEAT} rel="noopener">Request this one</a>.
+          <a href={REQUEST_CHEAT} target="_blank" rel="noopener">Request this one</a>.
         </p>
       </>
     )}
@@ -180,7 +180,7 @@ const jsonLd = [
         more people find tables they can actually trust. It is free and takes a second.
       </p>
     </div>
-    <a class="btn btn--star" href={REPO} rel="noopener">
+    <a class="btn btn--star" href={REPO} target="_blank" rel="noopener">
       <Icon name="star" size={18} /> Star on GitHub
     </a>
   </section>

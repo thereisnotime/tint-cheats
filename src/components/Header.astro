@@ -18,8 +18,8 @@ const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
       <a href={url('/')}>Home</a>
       <a href={url('/#tables')}>Tables</a>
       <a href={url('/how-to-use-cheat-engine')}>How to use</a>
-      <a href={REPORT_ISSUE} rel="noopener">Report issue</a>
-      <a class="nav-cta" href={REQUEST_CHEAT} rel="noopener">Request a cheat</a>
+      <a href={REPORT_ISSUE} target="_blank" rel="noopener">Report issue</a>
+      <a class="nav-cta" href={REQUEST_CHEAT} target="_blank" rel="noopener">Request a cheat</a>
 
       <form class="header-search" role="search" method="get" action={url('/')}>
         <button type="button" class="header-search__toggle" aria-label="Search tables" aria-expanded="false">
@@ -43,13 +43,13 @@ const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
       </button>
 
       <span class="nav-sep" aria-hidden="true"></span>
-      <a class="nav-icon" href={REPO} rel="noopener" aria-label="Star us on GitHub" title="GitHub">
+      <a class="nav-icon" href={REPO} target="_blank" rel="noopener" aria-label="Star us on GitHub" title="GitHub">
         <Icon name="github" size={19} />
       </a>
-      <a class="nav-icon" href={TELEGRAM} rel="noopener" aria-label="Join our Telegram group" title="Telegram">
+      <a class="nav-icon" href={TELEGRAM} target="_blank" rel="noopener" aria-label="Join our Telegram group" title="Telegram">
         <Icon name="telegram" size={18} />
       </a>
-      <a class="nav-icon" href={MATRIX} rel="noopener" aria-label="Join our Matrix room" title="Matrix">
+      <a class="nav-icon" href={MATRIX} target="_blank" rel="noopener" aria-label="Join our Matrix room" title="Matrix">
         <Icon name="matrix" size={18} />
       </a>
     </nav>

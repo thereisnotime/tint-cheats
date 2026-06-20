@@ -92,14 +92,14 @@ const rows = files.map((file) => {
             <Icon name="download" size={18} /> Download
           </a>
           {r.vt && (
-            <a class="btn btn--ghost" href={r.vt} rel="noopener">
+            <a class="btn btn--ghost" href={r.vt} target="_blank" rel="noopener">
               Verify on VirusTotal
             </a>
           )}
-          <a class="link-quiet" href={r.rawUrl} rel="noopener">
+          <a class="link-quiet" href={r.rawUrl} target="_blank" rel="noopener">
             View raw
           </a>
-          <a class="link-quiet" href={r.historyUrl} rel="noopener">
+          <a class="link-quiet" href={r.historyUrl} target="_blank" rel="noopener">
             History
           </a>
         </div>
