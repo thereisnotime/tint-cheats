@@ -7,13 +7,13 @@
     "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/arms-of-god/tint-arms-of-god-1.2.1.ct",
     "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/arms-of-god/tint-arms-of-god-1.2.1.ct"
   },
-  "fatekeeper/tint-fatekeeper-1.0.1.ct": {
-    "sha256": "8d2c6b46d64050848681c9c0eff86c48f4a65db549a8d25051a6b66aa8fd8898",
-    "size": 8688,
-    "virustotal": "https://www.virustotal.com/gui/file/8d2c6b46d64050848681c9c0eff86c48f4a65db549a8d25051a6b66aa8fd8898",
-    "download": "/downloads/fatekeeper/tint-fatekeeper-1.0.1.ct",
-    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/fatekeeper/tint-fatekeeper-1.0.1.ct",
-    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/fatekeeper/tint-fatekeeper-1.0.1.ct"
+  "fatekeeper/tint-fatekeeper-1.1.0.ct": {
+    "sha256": "41001c5718f940564ed0474c6348a72124f3aea46714e4850240231716557053",
+    "size": 11298,
+    "virustotal": "https://www.virustotal.com/gui/file/41001c5718f940564ed0474c6348a72124f3aea46714e4850240231716557053",
+    "download": "/downloads/fatekeeper/tint-fatekeeper-1.1.0.ct",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/fatekeeper/tint-fatekeeper-1.1.0.ct",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/fatekeeper/tint-fatekeeper-1.1.0.ct"
   },
   "minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct": {
     "sha256": "2b0cf657450a478713ef786f1338ecf580da1e0c1f25bea8a28a826929c9e401",

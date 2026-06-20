@@ -67,38 +67,91 @@ if mr then synchronize(function() mr.Active = false end) end
     <!-- ── Group header ──────────────────────────────────────────────── -->
     <CheatEntry>
       <ID>1</ID>
-      <Description>Fatekeeper Trainer v1.0.1  by TINT</Description>
+      <Description>Fatekeeper Trainer v1.1.0  by TINT</Description>
       <Color>808080</Color>
       <GroupHeader>1</GroupHeader>
       <Options moHideChildren="0" moDeactivateChildrenAsWell="1"/>
     </CheatEntry>
 
     <!--
-      God Mode  (code hook on the shared damage-application routine)
+      Shared resource hook  (God Mode + Unlimited Mana on ONE instruction)
 
         AOB (unique, 1 match):  F3 0F 11 76 34 E8 ?? ?? ?? ?? 48 8B F8
-        Hooked instruction:     movss [rsi+34],xmm6   (stores new health)
-        Context (verified):     xmm6 = [rsi+30] - clamped_damage  (health - damage)
-        rsi                  =  health-bearing character object (player AND enemies)
-        rsi+34               =  current health (float)
-        rsi+378              =  "has health component" flag (NOT a player/enemy
-                                 discriminator; enemies have it set too)
+        Hooked instruction:     movss [rsi+34],xmm6   (generic "current value" store)
+        rsi    = a resource object (shared base class, vtable SLASHER+8E4A420)
+        rsi+30 = max value (float)        rsi+34 = current value (float)
+        rsi+378 = health-component flag:  != 0 -> HEALTH (player/enemy),  == 0 -> non-health
+                                          resource (MANA / stamina / etc.)
 
-      Logic: if [rsi+378] != 0  -> force health to 999  (player stays topped up).
-             else               -> run the original store unchanged.
-      Enemies keep this flag set too, so God Mode does not make them invincible in
-      practice for the player's own kills; OHK is handled by a separate cheat that
-      needs a real enemy discriminator (found empirically, see One-Hit-Kill entry).
+      The same instruction writes health on the pawn AND mana on the mana object;
+      they are distinguished only by [rsi+378].  So both cheats must share one hook.
 
-      Why AOB and not a static offset:
-        The original qteeq table hardcoded "SLASHER-Win64-Shipping.exe"+5E187A0.
-        A game patch shifted code by 0x19A0; the same instruction now lives at
-        +0x5E1A140 (current build).  aobscanmodule re-locates it every enable,
-        so this table self-heals across updates instead of silently doing nothing.
+        fkFlags+0 (dword) = God Mode      : if set, force HEALTH (rsi+378!=0) to 999
+        fkFlags+4 (dword) = Unlimited Mana: if set, force NON-HEALTH (rsi+378==0)
+                                            current(rsi+34) = max(rsi+30)  -> pinned full
 
-      Verified this session: AOB resolves to exactly ONE address; God Mode
-      confirmed working in-game (player health locked high).
+      F1 / F2 just flip those flag dwords; either one auto-installs the shared hook
+      (the "[ Core ]" record).  Found via debugger "find what writes" on the live
+      mana address -> it resolved to this exact God Mode instruction.
+
+      Why AOB: the original qteeq offset +5E187A0 died on a patch; AOB now lands at
+      +5E1A140.  aobscanmodule re-locates it every enable, self-healing across updates.
     -->
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>[ Core ]  Cheat hook  (shared)</Description>
+      <Color>808080</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscanmodule(fkHP,SLASHER-Win64-Shipping.exe,F3 0F 11 76 34 E8 ?? ?? ?? ?? 48 8B F8)
+alloc(newmem,$1000,fkHP)
+alloc(fkFlags,8,fkHP)
+
+registersymbol(fkHP)
+registersymbol(fkFlags)
+
+label(orig)
+label(return)
+label(nonhealth)
+
+newmem:
+  cmp dword ptr [rsi+378],0
+  je nonhealth
+  // health-bearing object -> God Mode
+  cmp dword ptr [fkFlags],0
+  je orig
+  mov dword ptr [rsi+34],(float)999.0
+  jmp return
+nonhealth:
+  // non-health resource (mana/stamina) -> Unlimited Mana (pin current = max)
+  cmp dword ptr [fkFlags+4],0
+  je orig
+  push rax
+  mov eax,[rsi+30]
+  mov [rsi+34],eax
+  pop rax
+  jmp return
+orig:
+  movss [rsi+34],xmm6
+  jmp return
+
+fkHP:
+  jmp newmem
+return:
+
+[DISABLE]
+fkHP:
+  db F3 0F 11 76 34
+  // movss [rsi+34],xmm6   (original)
+
+unregistersymbol(fkHP)
+unregistersymbol(fkFlags)
+dealloc(newmem)
+dealloc(fkFlags)
+</AssemblerScript>
+    </CheatEntry>
+
+    <!-- ── F1: God Mode (flag bit) ──────────────────────────────────── -->
     <CheatEntry>
       <ID>2</ID>
       <Description>[ F1 ]  God Mode</Description>
@@ -112,35 +165,49 @@ if mr then synchronize(function() mr.Active = false end) end
           <DeactivateSound>Deactivate</DeactivateSound>
         </Hotkey>
       </Hotkeys>
-      <AssemblerScript>[ENABLE]
-aobscanmodule(fkHP,SLASHER-Win64-Shipping.exe,F3 0F 11 76 34 E8 ?? ?? ?? ?? 48 8B F8)
-alloc(newmem,$1000,fkHP)
-
-label(orig)
-label(return)
-
-newmem:
-  cmp dword ptr [rsi+378],0
-  je orig
-  mov dword ptr [rsi+34],(float)999.0
-  jmp return
-orig:
-  movss [rsi+34],xmm6
-  jmp return
-
-fkHP:
-  jmp newmem
-return:
-
-registersymbol(fkHP)
-
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+-- make sure the shared hook is installed
+local al = getAddressList()
+local core = al.getMemoryRecordByDescription("[ Core ]  Cheat hook  (shared)")
+if core and not core.Active then synchronize(function() core.Active = true end); checkSynchronize(1500) end
+if not pcall(function() writeInteger("fkFlags", 1) end) then
+  reinitializeSymbolhandler()
+  pcall(function() writeInteger("fkFlags", 1) end)
+end
 [DISABLE]
-fkHP:
-  db F3 0F 11 76 34
-  // movss [rsi+34],xmm6   (original)
+pcall(function() writeInteger("fkFlags", 0) end)
+</AssemblerScript>
+    </CheatEntry>
 
-unregistersymbol(fkHP)
-dealloc(newmem)
+    <!-- ── F2: Unlimited Mana (flag bit) ────────────────────────────── -->
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>[ F2 ]  Unlimited Mana  (freeze at max)</Description>
+      <Color>00C0FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>113</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+-- make sure the shared hook is installed
+local al = getAddressList()
+local core = al.getMemoryRecordByDescription("[ Core ]  Cheat hook  (shared)")
+if core and not core.Active then synchronize(function() core.Active = true end); checkSynchronize(1500) end
+if not pcall(function() writeInteger("fkFlags+4", 1) end) then
+  reinitializeSymbolhandler()
+  pcall(function() writeInteger("fkFlags+4", 1) end)
+end
+[DISABLE]
+pcall(function() writeInteger("fkFlags+4", 0) end)
 </AssemblerScript>
     </CheatEntry>
 
@@ -177,7 +244,7 @@ for i = 0, al.Count - 1 do
     if mr and not mr.isGroupHeader then mr.Active = false end
   end)
 end
-MainForm.Caption = "Fatekeeper Trainer v1.0.1  [ALL CHEATS OFF]"
+MainForm.Caption = "Fatekeeper Trainer v1.1.0  [ALL CHEATS OFF]"
 
 [DISABLE]
 </AssemblerScript>
@@ -186,24 +253,28 @@ MainForm.Caption = "Fatekeeper Trainer v1.0.1  [ALL CHEATS OFF]"
   </CheatEntries>
 
   <LuaScript>
---[[ Fatekeeper Trainer v1.0.1  by TINT
+--[[ Fatekeeper Trainer v1.1.0  by TINT
      Game version: current Steam build (AOB-based, version independent)
      Process: SLASHER-Win64-Shipping.exe
 
      Hotkeys:
-       F1  -- God Mode + One-Hit-Kill (single hook on the health-write instruction)
+       F1  -- God Mode            (force health to 999)
+       F2  -- Unlimited Mana      (freeze mana/non-health resources at max)
        F12 -- Disable All (panic key)
 
      Mechanisms:
        - Auto-attaches on load; polls every 2s until game runs.
        - Disables all active cheats when game process exits.
-       - Title bar shows attach status and active cheat.
+       - Title bar shows attach status.
 
-     God Mode + OHK hook:
+     Shared hook  (one instruction does health AND mana):
        aobscanmodule on  F3 0F 11 76 34 E8 ?? ?? ?? ?? 48 8B F8
-       = movss [rsi+34],xmm6   (game's health write; rsi = character object)
-       rsi+34  = health (float);  rsi+378 = player(!=0)/enemy(==0) discriminator
-       player -> 999 (god mode),  enemy -> 0 (one-hit-kill)
+       = movss [rsi+34],xmm6   (generic current-value store; rsi = resource object)
+       rsi+30 = max,  rsi+34 = current,  rsi+378 = health flag (!=0 health / ==0 mana)
+       God Mode  -> rsi+378!=0 : current = 999
+       Unlim Mana-> rsi+378==0 : current = max   (pinned full)
+       fkFlags+0 = God Mode on/off,  fkFlags+4 = Unlimited Mana on/off
+       F1/F2 flip those flags and auto-install the "[ Core ]" hook on demand.
        Original qteeq offset +5E187A0 died on a patch; AOB now lands at +5E1A140.
 ]]
 
@@ -231,14 +302,14 @@ _FK_watchTimer.OnTimer = function()
       openProcess(pid)
       _FK_attached = true
       _FK_pid      = pid
-      MainForm.Caption = "Fatekeeper Trainer v1.0.1  [ATTACHED pid=" .. pid .. "]"
+      MainForm.Caption = "Fatekeeper Trainer v1.1.0  [ATTACHED pid=" .. pid .. "]"
     end
   else
     if _FK_attached then
       FK_disableAll()
       _FK_attached = false
       _FK_pid      = 0
-      MainForm.Caption = "Fatekeeper Trainer v1.0.1  [WAITING FOR GAME...]"
+      MainForm.Caption = "Fatekeeper Trainer v1.1.0  [WAITING FOR GAME...]"
     end
   end
 end
@@ -249,9 +320,9 @@ if _pid0 and _pid0 ~= 0 then
   openProcess(_pid0)
   _FK_attached = true
   _FK_pid      = _pid0
-  MainForm.Caption = "Fatekeeper Trainer v1.0.1  [ATTACHED pid=" .. _pid0 .. "]"
+  MainForm.Caption = "Fatekeeper Trainer v1.1.0  [ATTACHED pid=" .. _pid0 .. "]"
 else
-  MainForm.Caption = "Fatekeeper Trainer v1.0.1  [WAITING FOR GAME...]"
+  MainForm.Caption = "Fatekeeper Trainer v1.1.0  [WAITING FOR GAME...]"
 end
   </LuaScript>
   <UserdefinedSymbols/>
