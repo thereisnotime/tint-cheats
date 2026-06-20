@@ -2,7 +2,7 @@
 title: "Arms of God Cheat Engine Table"
 game: "Arms of God"
 slug: "arms-of-god"
-status: wip
+status: working
 table_version: "1.2.1"
 author: "TINT"
 author_url: "https://github.com/thereisnotime"

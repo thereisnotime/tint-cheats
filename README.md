@@ -22,8 +22,9 @@ This project exists because finding clean tables online is a nightmare of survey
 
 | Game | Status | Table ver | Tested game ver | Updated | Link |
 | --- | --- | --- | --- | --- | --- |
-| Minutes Till Dawn | ✅ Working | 1.7.0 | Current Steam build | 2026-06-20 | [open](tables/minutes-till-dawn/) |
-| Sample Game | 🚧 WIP | 0.1.0 | 1.0.0 | 2026-06-20 | [open](tables/sample-template/) |
+| Arms of God | ✅ Working | 1.2.1 | 1.0 | 2026-06-20 | [open](tables/arms-of-god/) |
+| Fatekeeper | ✅ Working | 1.0.1 | Current Steam build | 2026-06-20 | [open](tables/fatekeeper/) |
+| 20 Minutes Till Dawn | ✅ Working | 1.7.1 | Current Steam build | 2026-06-20 | [open](tables/minutes-till-dawn/) |
 
 <!-- TABLES:END -->
 

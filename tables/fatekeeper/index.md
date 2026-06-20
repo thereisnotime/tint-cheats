@@ -2,7 +2,7 @@
 title: "Fatekeeper Cheat Engine Table"
 game: "Fatekeeper"
 slug: "fatekeeper"
-status: wip
+status: working
 table_version: "1.0.1"
 author: "TINT"
 author_url: "https://github.com/thereisnotime"
