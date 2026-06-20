@@ -60,6 +60,13 @@ just dev      # start the dev server
 just verify   # validate + type-check + build (run before pushing)
 ```
 
+## Community
+
+Join the chat for update alerts, cheat requests, and help from other players:
+
+- Telegram: https://t.me/+xgtzaZBrKRA2OWI8
+- Matrix: https://matrix.to/#/!GkVomrhlzPROGFzueG:matrix.org?via=matrix.org
+
 ## Report or request
 
 Found a broken table, or want one for a specific game? Open an issue:
