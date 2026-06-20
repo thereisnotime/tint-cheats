@@ -1,6 +1,6 @@
 ---
-title: "Minutes Till Dawn Cheat Engine Table"
-game: "Minutes Till Dawn"
+title: "20 Minutes Till Dawn Cheat Engine Table"
+game: "20 Minutes Till Dawn"
 slug: "minutes-till-dawn"
 status: working
 table_version: "1.7.0"
@@ -55,15 +55,21 @@ cheats:
     description: "Turns every active script back off."
 files:
   - name: "minutes-till-dawn.CT"
-    label: "Minutes Till Dawn Trainer (v1.7)"
+    label: "20 Minutes Till Dawn Trainer (v1.7)"
 cover: ./media/cover.png
-game_description: "Minutes Till Dawn is a survival roguelite shooter where you fend off endless swarms of monsters until dawn, picking powerful upgrades between waves. Built by flanne and published by Erabit Studios."
-description: "Free, open-source Cheat Engine table for Minutes Till Dawn: XP boost, ammo lock, unlimited souls, freeze timer, rapid fire, one-hit kills and more."
+game_description: "20 Minutes Till Dawn is a survival roguelite where endless hordes of creatures lurk from the dark. Craft overpowering builds and eradicate waves of Lovecraftian nightmares. Will you survive the night? By flanne (published by flanne / Erabit)."
+trailer: "https://store.steampowered.com/app/1966900/20_Minutes_Till_Dawn/"
+screenshots:
+  - ./media/screenshot-1.jpg
+  - ./media/screenshot-2.jpg
+  - ./media/screenshot-3.jpg
+  - ./media/screenshot-4.jpg
+description: "Free, open-source Cheat Engine table for 20 Minutes Till Dawn: XP boost, ammo lock, unlimited souls, freeze timer, rapid fire, one-hit kills and more."
 ---
 
 ## Overview
 
-A Cheat Engine table for **Minutes Till Dawn**, the survival roguelite shooter.
+A Cheat Engine table for **20 Minutes Till Dawn**, the survival roguelite shooter.
 Everything is hotkey driven (F1 to F12), so you can toggle effects mid-run
 without alt-tabbing. The table is built for the single-player game only.
 
@@ -80,7 +86,7 @@ Cheat Engine if they clash with the game.
 ## Requirements
 
 - [Cheat Engine](https://www.cheatengine.org/) 7.5 or newer.
-- Minutes Till Dawn on Steam (Windows).
+- 20 Minutes Till Dawn on Steam (Windows).
 - Single-player session. Do not use this in any online or competitive context.
 
 ## Installation & Usage
@@ -89,7 +95,7 @@ Cheat Engine if they clash with the game.
 2. Download `minutes-till-dawn.CT` from the download box on this page.
 3. Verify the SHA-256 against the value shown here (optional but recommended),
    or check the VirusTotal link.
-4. Launch Minutes Till Dawn.
+4. Launch 20 Minutes Till Dawn.
 5. Open the `.CT` file in Cheat Engine (File, Open, or double-click it).
 6. Click the glowing computer icon in Cheat Engine and select the game process.
 7. Tick the boxes for the cheats you want, or use the F1 to F12 hotkeys in game.
@@ -98,9 +104,9 @@ Cheat Engine if they clash with the game.
 ## Compatibility
 
 The version matrix above is generated from this table's metadata. The trainer
-targets the current Steam build of Minutes Till Dawn. If a game update moves
+targets the current Steam build of 20 Minutes Till Dawn. If a game update moves
 things around and a function stops working, please
-[open an issue](https://github.com/thereisnotime/tint-cheats/issues/new/choose)
+[open an issue](https://github.com/thereisnotime/tint-cheats/issues/new?template=report-issue.yml)
 with your game version and which function broke.
 
 ## Known Issues
@@ -120,5 +126,5 @@ with your game version and which function broke.
 ## Credits
 
 - Table by TINT (thereisnotime).
-- Minutes Till Dawn by flanne / Erabit Studios. This table is unofficial and not
+- 20 Minutes Till Dawn by flanne / Erabit Studios. This table is unofficial and not
   affiliated with the developers or publisher.
