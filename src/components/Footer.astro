@@ -8,6 +8,12 @@ const REPORT_ISSUE = `${REPO}/issues/new?template=report-issue.yml`;
 const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
 const LICENSE = `${REPO}/blob/main/LICENSE`;
 const year = new Date().getFullYear();
+
+// Build stamp, injected at build time (see astro.config.mjs).
+const buildSha = __BUILD_SHA__;
+const buildTime = __BUILD_TIME__;
+const buildLabel = buildTime.replace('T', ' ').replace(/:\d{2}\.\d+Z$/, ' UTC');
+const commitUrl = `${REPO}/commit/${buildSha}`;
 ---
 
 <footer class="site-footer">
@@ -52,6 +58,15 @@ const year = new Date().getFullYear();
       endorsed by, or sponsored by any game developer or publisher. All
       trademarks belong to their respective owners.
     </p>
-    <p class="site-footer__fine">© {year} tint-cheats contributors.</p>
+    <p class="site-footer__fine">
+      © {year} tint-cheats contributors.
+      {buildSha !== 'dev' && (
+        <>
+          {' · '}Build
+          <a href={commitUrl} target="_blank" rel="noopener"><code>{buildSha}</code></a>
+          {' · '}<time datetime={buildTime}>{buildLabel}</time>
+        </>
+      )}
+    </p>
   </div>
 </footer>
