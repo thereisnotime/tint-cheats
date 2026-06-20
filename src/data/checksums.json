@@ -1,11 +1,27 @@
 {
-  "minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct": {
-    "sha256": "97303f375c0850e2b845d01985884e4bbbfc3706f7e679f31ad2e15bf1ce9cef",
-    "size": 29879,
-    "virustotal": "https://www.virustotal.com/gui/file/97303f375c0850e2b845d01985884e4bbbfc3706f7e679f31ad2e15bf1ce9cef",
-    "download": "/downloads/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct",
-    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct",
-    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct"
+  "arms-of-god/tint-arms-of-god-1.2.1.ct": {
+    "sha256": "da8d3f75d3077b9373ba3872e2becb8543c776eb3125958c069cbbb222b3c5c0",
+    "size": 10067,
+    "virustotal": "https://www.virustotal.com/gui/file/da8d3f75d3077b9373ba3872e2becb8543c776eb3125958c069cbbb222b3c5c0",
+    "download": "/downloads/arms-of-god/tint-arms-of-god-1.2.1.ct",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/arms-of-god/tint-arms-of-god-1.2.1.ct",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/arms-of-god/tint-arms-of-god-1.2.1.ct"
+  },
+  "fatekeeper/tint-fatekeeper-1.0.1.ct": {
+    "sha256": "8d2c6b46d64050848681c9c0eff86c48f4a65db549a8d25051a6b66aa8fd8898",
+    "size": 8688,
+    "virustotal": "https://www.virustotal.com/gui/file/8d2c6b46d64050848681c9c0eff86c48f4a65db549a8d25051a6b66aa8fd8898",
+    "download": "/downloads/fatekeeper/tint-fatekeeper-1.0.1.ct",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/fatekeeper/tint-fatekeeper-1.0.1.ct",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/fatekeeper/tint-fatekeeper-1.0.1.ct"
+  },
+  "minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct": {
+    "sha256": "0dbb9f05e43b5ce41ef9b98d31fee53d257ca9a7df988aa38f17541b76b67c4e",
+    "size": 32315,
+    "virustotal": "https://www.virustotal.com/gui/file/0dbb9f05e43b5ce41ef9b98d31fee53d257ca9a7df988aa38f17541b76b67c4e",
+    "download": "/downloads/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct"
   },
   "sample-template/tint-sample-game-0.1.0.ct": {
     "sha256": "2e746c4842a84c49c833be6f5d6de06611f7d2e0bccc29db1dad2aefb85ff48b",

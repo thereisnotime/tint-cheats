@@ -2,9 +2,71 @@
 <CheatTable CheatEngineTableVersion="40">
   <CheatEntries>
 
+    <!-- == tint-cheats community: free, open-source CE tables (no paywalls, no malware, no surveys) == -->
+    <CheatEntry>
+      <ID>900</ID>
+      <Description>tint-cheats  -  free, open-source CE tables  -  no paywalls, no malware, no surveys</Description>
+      <Color>1E90FF</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>901</ID>
+          <Description>[ Open ]  Official site and free downloads  (thereisnotime.github.io/tint-cheats)</Description>
+          <Color>1E90FF</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://thereisnotime.github.io/tint-cheats]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>902</ID>
+          <Description>[ Open ]  Join the Telegram group</Description>
+          <Color>26A5E4</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://t.me/+xgtzaZBrKRA2OWI8]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>903</ID>
+          <Description>[ Open ]  Join the Matrix room</Description>
+          <Color>00A86B</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://matrix.to/#/!GkVomrhlzPROGFzueG:matrix.org?via=matrix.org]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+
+    <!-- ===================== separator: header / cheats ===================== -->
+    <CheatEntry>
+      <ID>904</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
     <CheatEntry>
       <ID>10</ID>
-      <Description>MinutesTillDawn Trainer v1.7  by TINT</Description>
+      <Description>MinutesTillDawn Trainer v1.7.1  by TINT</Description>
       <Color>808080</Color>
       <GroupHeader>1</GroupHeader>
       <Options moHideChildren="0" moDeactivateChildrenAsWell="1"/>
@@ -29,10 +91,9 @@ if syntaxcheck then return end
 [ENABLE]
 local input = inputQuery("XP Boost", "XP per drop (blank = 50):", "")
 local xpVal = (input and input ~= "") and tonumber(input) or 50
-if not xpVal or xpVal < 1 then xpVal = 50 end
+if not xpVal or xpVal &lt; 1 then xpVal = 50 end
 
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 _MTD_xpVal = xpVal
 _MTD_xpCls = mono_findClass("", "Pickup")
@@ -86,8 +147,7 @@ local input = inputQuery("Ammo Lock", "Lock ammo at (blank = max ammo):", "")
 local lockVal = (input and input ~= "") and tonumber(input) or nil
 if lockVal and (lockVal &lt; 1 or lockVal &gt; 999999) then lockVal = nil end
 
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 -- Ammo.infiniteAmmo @64 (bool)  &lt;amount&gt;k__BackingField @72 (int)
 -- Ammo.gun @24 -&gt; Gun.gunData @56 -&gt; GunData.maxAmmo @96
@@ -154,8 +214,7 @@ MainForm.Caption = "MinutesTillDawn Trainer"
 if syntaxcheck then return end
 
 [ENABLE]
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 -- PickupRange = StatType 17. The game stores a StatMod per stat type in a contiguous
 -- array of 22 StatMod objects (stride 0x30). Writing a large _multiplierBonus @28
@@ -216,8 +275,7 @@ MainForm.Caption = "MinutesTillDawn Trainer"
 if syntaxcheck then return end
 
 [ENABLE]
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 -- Runtime souls counter: same address F5 uses (SaveSystem static base +24)
 local classSS = mono_findClass("", "SaveSystem")
@@ -274,10 +332,7 @@ MainForm.Caption = "MinutesTillDawn Trainer"
 if syntaxcheck then return end
 
 [ENABLE]
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then
-  error("Mono collector failed - is MinutesTillDawn.exe running?")
-end
+if not MTD_initMono() then return end
 
 local classSS = mono_findClass("", "SaveSystem")
 if not classSS or classSS == 0 then
@@ -323,10 +378,7 @@ MainForm.Caption = "MinutesTillDawn Trainer"
 if syntaxcheck then return end
 
 [ENABLE]
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then
-  error("Mono collector failed - is MinutesTillDawn.exe running?")
-end
+if not MTD_initMono() then return end
 
 -- Class may be nil if enabled from menu; timer re-discovers on run start.
 _MTD_hpCls  = mono_findClass("", "PlayerHealth")
@@ -386,10 +438,7 @@ MainForm.Caption = "MinutesTillDawn Trainer"
 if syntaxcheck then return end
 
 [ENABLE]
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then
-  error("Mono collector failed - is MinutesTillDawn.exe running?")
-end
+if not MTD_initMono() then return end
 
 _MTD_timerCls  = mono_findClass("", "GameTimer")
 _MTD_timerBase = nil
@@ -468,8 +517,7 @@ if not val or val &lt; 0 then
   return
 end
 
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 _MTD_stCls    = mono_findClass("", "GameTimer")
 _MTD_stBase   = nil
@@ -528,8 +576,7 @@ if syntaxcheck then return end
 [ENABLE]
 local mult = 4.0
 
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 -- Class may be nil if enabled from menu; applySpeed re-discovers on run start.
 _MTD_speedCls  = mono_findClass("", "PlayerController")
@@ -592,8 +639,7 @@ if syntaxcheck then return end
 [ENABLE]
 local dmgVal = 9999
 
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 local cls = mono_findClass("", "Gun")
 if not cls or cls == 0 then error("Gun class not found") end
@@ -696,8 +742,7 @@ MainForm.Caption = "MinutesTillDawn Trainer"
 if syntaxcheck then return end
 
 [ENABLE]
-openProcess("MinutesTillDawn.exe")
-if LaunchMonoDataCollector() == 0 then error("Mono collector failed") end
+if not MTD_initMono() then return end
 
 -- Class may be nil if enabled from menu; timer re-discovers on run start.
 local function applyOneHit(insts)
@@ -738,6 +783,15 @@ MainForm.Caption = "MinutesTillDawn Trainer"
 </AssemblerScript>
     </CheatEntry>
 
+    <!-- ===================== separator: footer ===================== -->
+    <CheatEntry>
+      <ID>998</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
     <CheatEntry>
       <ID>8</ID>
       <Description>[ F12 ]  Disable All Cheats</Description>
@@ -770,7 +824,7 @@ MainForm.Caption = "MinutesTillDawn Trainer  [ALL CHEATS OFF]"
   </CheatEntries>
 
   <LuaScript>
---[[ MinutesTillDawn Trainer v1.7  by TINT
+--[[ MinutesTillDawn Trainer v1.7.1  by TINT
 
      Usage:
        F5  / check "Unlimited Souls"            -- freeze souls at 99999999
@@ -806,6 +860,23 @@ MainForm.Caption = "MinutesTillDawn Trainer  [ALL CHEATS OFF]"
        GunData.maxAmmo @96  .gun via Gun.gunData @56
        SaveData.points @72        -- between-run souls (serialized copy; use static+24 for live)
 ]]
+
+-- ── Mono init guard ─────────────────────────────────────────────────────────
+-- Call at the top of every cheat ENABLE. Returns false (and updates caption)
+-- if the game is not running, so cheats auto-saved as Active=1 don't error.
+function MTD_initMono()
+  local pid = getProcessIDFromProcessName("MinutesTillDawn.exe")
+  if not pid or pid == 0 then
+    MainForm.Caption = "MinutesTillDawn Trainer  [start the game first]"
+    return false
+  end
+  openProcess(pid)
+  if LaunchMonoDataCollector() == 0 then
+    MainForm.Caption = "MinutesTillDawn Trainer  [Mono init failed]"
+    return false
+  end
+  return true
+end
 
 -- ── Auto-attach watchdog ─────────────────────────────────────────────────────
 -- Polls every 2s for MinutesTillDawn.exe.  Attaches when found.

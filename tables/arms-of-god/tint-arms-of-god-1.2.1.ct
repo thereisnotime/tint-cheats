@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="40">
+  <CheatEntries>
+
+    <!-- == tint-cheats community: free, open-source CE tables (no paywalls, no malware, no surveys) == -->
+    <CheatEntry>
+      <ID>900</ID>
+      <Description>tint-cheats  -  free, open-source CE tables  -  no paywalls, no malware, no surveys</Description>
+      <Color>1E90FF</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>901</ID>
+          <Description>[ Open ]  Official site and free downloads  (thereisnotime.github.io/tint-cheats)</Description>
+          <Color>1E90FF</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://thereisnotime.github.io/tint-cheats]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>902</ID>
+          <Description>[ Open ]  Join the Telegram group</Description>
+          <Color>26A5E4</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://t.me/+xgtzaZBrKRA2OWI8]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>903</ID>
+          <Description>[ Open ]  Join the Matrix room</Description>
+          <Color>00A86B</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://matrix.to/#/!GkVomrhlzPROGFzueG:matrix.org?via=matrix.org]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+
+    <!-- ===================== separator: header / cheats ===================== -->
+    <CheatEntry>
+      <ID>904</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>ArmsOfGod Trainer v1.2.1  by TINT</Description>
+      <Color>808080</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0" moDeactivateChildrenAsWell="1"/>
+    </CheatEntry>
+
+    <!--
+      Resources chain (live gameplay object):
+        exe + 0x81FDEA0 → GUObjectArray chunks ptr
+        chunk[0] + in_chunk*24 → UObject*  (where FName idx == 459711, TArray.Num==6 at +0x560)
+        UObject + 0x558 → TArray.Data ptr  (TArray[double], Num=6, Max=6)
+        TArray.Data + 0x00 → Ashes   (double)
+        TArray.Data + 0x08 → Shards  (double)
+        TArray.Data + 0x10 → Vows    (double)
+        TArray.Data + 0x18 → Cores   (double)
+        TArray.Data + 0x20 → Edicts  (double)
+        TArray.Data + 0x28 → Relics  (double)
+      NOTE: FName 165598 = BP_AS_SaveGameGlobal_C (save game disk object, NOT live)
+            FName 459711 = live gameplay resource object (class CDO; instance ic=48270 has Num=6)
+    -->
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>[ F3 ]  Unlimited Resources (Ashes/Shards/Vows/Cores/Edicts/Relics)</Description>
+      <Color>00FF80</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>114</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+do
+  local EXE       = "ArmsOfGod-Win64-Shipping.exe"
+  local GUO_OFF   = 0x81FDEA0
+  local OBJ_FNAME = 0x18
+  local OBJ_TA    = 0x558
+  local FNAME_IDX = 459711
+
+  AOG_resObj  = nil
+  AOG_resData = nil
+
+  local function findResources()
+    local proc = getAddress(EXE)
+    if not proc or proc == 0 then return end
+    local chunks = readQword(proc + GUO_OFF)
+    if not chunks then return end
+    for ci = 0, 1 do
+      local chunk = readQword(chunks + ci * 8)
+      if not chunk then break end
+      for ic = 0, 65535 do
+        local obj = readQword(chunk + ic * 24)
+        if obj and obj > 0x40000000 and obj &lt; 0x7FF0000000000 then
+          local fn = readQword(obj + OBJ_FNAME)
+          if fn and (fn &amp; 0xffffffff) == FNAME_IDX then
+            local ta  = obj + OBJ_TA
+            local num = readInteger(ta + 8)
+            if num == 6 then
+              AOG_resObj  = obj
+              AOG_resData = readQword(ta)
+              return
+            end
+          end
+        end
+      end
+    end
+  end
+
+  local function lockResources()
+    if AOG_resObj then
+      local fn = readQword(AOG_resObj + OBJ_FNAME)
+      if not fn or (fn &amp; 0xffffffff) ~= FNAME_IDX then
+        AOG_resObj = nil; AOG_resData = nil
+      else
+        AOG_resData = readQword(AOG_resObj + OBJ_TA)
+      end
+    end
+    if not AOG_resData then findResources() end
+    if not AOG_resData then return end
+    -- Read lock value from editable slot; guard against unallocated (nil/0) or zero read
+    local val = 9999
+    if AOG_resLockVal and AOG_resLockVal ~= 0 then
+      local ok, v = pcall(readDouble, AOG_resLockVal)
+      if ok and v and v > 0 then val = v end
+    end
+    writeDouble(AOG_resData + 0x00, val)
+    writeDouble(AOG_resData + 0x08, val)
+    writeDouble(AOG_resData + 0x10, val)
+    writeDouble(AOG_resData + 0x18, val)
+    writeDouble(AOG_resData + 0x20, val)
+    writeDouble(AOG_resData + 0x28, val)
+  end
+
+  lockResources()
+  AOG_resTimer = createTimer(nil, false)
+  AOG_resTimer.Interval = 200
+  AOG_resTimer.OnTimer = lockResources
+  AOG_resTimer.Enabled = true
+end
+
+MainForm.Caption = "ArmsOfGod Trainer v1.2.1  [RESOURCES LOCKED]"
+
+[DISABLE]
+if AOG_resTimer then AOG_resTimer.destroy(); AOG_resTimer = nil end
+AOG_resObj = nil; AOG_resData = nil
+MainForm.Caption = "ArmsOfGod Trainer v1.2.1"
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>3</ID>
+          <Description>  Lock value (edit me)</Description>
+          <ShowAsHex>0</ShowAsHex>
+          <VariableType>Double</VariableType>
+          <Address>AOG_resLockVal</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+
+    <!-- ===================== separator: footer ===================== -->
+    <CheatEntry>
+      <ID>998</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
+  </CheatEntries>
+
+  <LuaScript>
+--[[ ArmsOfGod Trainer v1.2.1  by TINT
+     Game version: 1.0
+     Process: ArmsOfGod-Win64-Shipping.exe
+
+     Hotkeys:
+       F3  -- Unlimited Resources (locks all 6 to editable value, default 9999)
+
+     Mechanisms:
+       - Auto-attaches on load; polls every 2s until game runs.
+       - Disables all active cheats when game process exits.
+       - Title bar shows attach status and active cheat.
+       - AOG_resLockVal: allocated in game process on first attach; shown as child entry.
+         User double-clicks the value in CE to change the lock amount.
+
+     Resource pointer chain (live gameplay object):
+       exe + 0x81FDEA0 → GUObjectArray chunks ptr
+       scan chunk0/1 for FName idx 459711 with TArray.Num==6 at +0x560
+       obj + 0x558 → TArray[double] header (Num=6, Max=6)
+       TArray.Data → [Ashes +0x00, Shards +0x08, Vows +0x10, Cores +0x18, Edicts +0x20, Relics +0x28]
+       NOTE: FName 165598 (BP_AS_SaveGameGlobal_C) is the SAVE GAME object - writes there have no effect on UI
+]]
+
+local AOG_PROC = "ArmsOfGod-Win64-Shipping.exe"
+local _AOG_attached = false
+local _AOG_pid      = 0
+
+-- AOG_resLockVal is allocated in game process memory on first attach.
+-- Must NOT call allocateMemory at load time (game may not be running yet).
+AOG_resLockVal = nil
+
+local function AOG_allocLockVal()
+  if AOG_resLockVal and AOG_resLockVal ~= 0 then return end
+  local ok, addr = pcall(allocateMemory, 8)
+  if ok and addr and addr ~= 0 then
+    AOG_resLockVal = addr
+    pcall(writeDouble, AOG_resLockVal, 9999)
+    pcall(registerSymbol, "AOG_resLockVal", AOG_resLockVal)
+  end
+end
+
+local function AOG_freeLockVal()
+  if AOG_resLockVal and AOG_resLockVal ~= 0 then
+    pcall(unregisterSymbol, "AOG_resLockVal")
+    pcall(freeMemory, AOG_resLockVal)
+  end
+  AOG_resLockVal = nil
+end
+
+local function AOG_disableAll()
+  local al = getAddressList()
+  for i = 0, al.Count - 1 do
+    local mr = al.getMemoryRecord(i)
+    pcall(function()
+      if mr and not mr.isGroupHeader then mr.Active = false end
+    end)
+  end
+end
+
+local _AOG_watchTimer = createTimer(nil, false)
+_AOG_watchTimer.Interval = 2000
+_AOG_watchTimer.OnTimer = function()
+  local pid = getProcessIDFromProcessName(AOG_PROC)
+  if pid and pid ~= 0 then
+    if not _AOG_attached or _AOG_pid ~= pid then
+      if _AOG_attached then AOG_disableAll(); AOG_freeLockVal() end
+      openProcess(pid)
+      AOG_allocLockVal()
+      _AOG_attached = true
+      _AOG_pid      = pid
+      MainForm.Caption = "ArmsOfGod Trainer v1.2.1  [ATTACHED pid=" .. pid .. "]"
+    end
+  else
+    if _AOG_attached then
+      AOG_disableAll()
+      AOG_freeLockVal()
+      _AOG_attached = false
+      _AOG_pid      = 0
+      MainForm.Caption = "ArmsOfGod Trainer v1.2.1  [WAITING FOR GAME...]"
+    end
+  end
+end
+_AOG_watchTimer.Enabled = true
+
+local _pid0 = getProcessIDFromProcessName(AOG_PROC)
+if _pid0 and _pid0 ~= 0 then
+  openProcess(_pid0)
+  AOG_allocLockVal()
+  _AOG_attached = true
+  _AOG_pid      = _pid0
+  MainForm.Caption = "ArmsOfGod Trainer v1.2.1  [ATTACHED pid=" .. _pid0 .. "]"
+else
+  MainForm.Caption = "ArmsOfGod Trainer v1.2.1  [WAITING FOR GAME...]"
+end
+  </LuaScript>
+  <UserdefinedSymbols/>
+</CheatTable>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="40">
+  <CheatEntries>
+
+    <!-- == tint-cheats community: free, open-source CE tables (no paywalls, no malware, no surveys) == -->
+    <CheatEntry>
+      <ID>900</ID>
+      <Description>tint-cheats  -  free, open-source CE tables  -  no paywalls, no malware, no surveys</Description>
+      <Color>1E90FF</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>901</ID>
+          <Description>[ Open ]  Official site and free downloads  (thereisnotime.github.io/tint-cheats)</Description>
+          <Color>1E90FF</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://thereisnotime.github.io/tint-cheats]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>902</ID>
+          <Description>[ Open ]  Join the Telegram group</Description>
+          <Color>26A5E4</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://t.me/+xgtzaZBrKRA2OWI8]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>903</ID>
+          <Description>[ Open ]  Join the Matrix room</Description>
+          <Color>00A86B</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://matrix.to/#/!GkVomrhlzPROGFzueG:matrix.org?via=matrix.org]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+
+    <!-- ===================== separator: header / cheats ===================== -->
+    <CheatEntry>
+      <ID>904</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
+    <!-- ── Group header ──────────────────────────────────────────────── -->
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>Fatekeeper Trainer v1.0.1  by TINT</Description>
+      <Color>808080</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0" moDeactivateChildrenAsWell="1"/>
+    </CheatEntry>
+
+    <!--
+      God Mode  (code hook on the shared damage-application routine)
+
+        AOB (unique, 1 match):  F3 0F 11 76 34 E8 ?? ?? ?? ?? 48 8B F8
+        Hooked instruction:     movss [rsi+34],xmm6   (stores new health)
+        Context (verified):     xmm6 = [rsi+30] - clamped_damage  (health - damage)
+        rsi                  =  health-bearing character object (player AND enemies)
+        rsi+34               =  current health (float)
+        rsi+378              =  "has health component" flag (NOT a player/enemy
+                                 discriminator; enemies have it set too)
+
+      Logic: if [rsi+378] != 0  -> force health to 999  (player stays topped up).
+             else               -> run the original store unchanged.
+      Enemies keep this flag set too, so God Mode does not make them invincible in
+      practice for the player's own kills; OHK is handled by a separate cheat that
+      needs a real enemy discriminator (found empirically, see One-Hit-Kill entry).
+
+      Why AOB and not a static offset:
+        The original qteeq table hardcoded "SLASHER-Win64-Shipping.exe"+5E187A0.
+        A game patch shifted code by 0x19A0; the same instruction now lives at
+        +0x5E1A140 (current build).  aobscanmodule re-locates it every enable,
+        so this table self-heals across updates instead of silently doing nothing.
+
+      Verified this session: AOB resolves to exactly ONE address; God Mode
+      confirmed working in-game (player health locked high).
+    -->
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>[ F1 ]  God Mode</Description>
+      <Color>00FF80</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>112</Keys>
+          <ActivateSound>Activate</ActivateSound>
+          <DeactivateSound>Deactivate</DeactivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>[ENABLE]
+aobscanmodule(fkHP,SLASHER-Win64-Shipping.exe,F3 0F 11 76 34 E8 ?? ?? ?? ?? 48 8B F8)
+alloc(newmem,$1000,fkHP)
+
+label(orig)
+label(return)
+
+newmem:
+  cmp dword ptr [rsi+378],0
+  je orig
+  mov dword ptr [rsi+34],(float)999.0
+  jmp return
+orig:
+  movss [rsi+34],xmm6
+  jmp return
+
+fkHP:
+  jmp newmem
+return:
+
+registersymbol(fkHP)
+
+[DISABLE]
+fkHP:
+  db F3 0F 11 76 34
+  // movss [rsi+34],xmm6   (original)
+
+unregistersymbol(fkHP)
+dealloc(newmem)
+</AssemblerScript>
+    </CheatEntry>
+
+    <!-- ===================== separator: footer ===================== -->
+    <CheatEntry>
+      <ID>998</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
+    <!-- ── F12: Disable All (always last) ───────────────────────────── -->
+    <CheatEntry>
+      <ID>99</ID>
+      <Description>[ F12 ]  Disable All Cheats</Description>
+      <Color>808080</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys>
+        <Hotkey>
+          <Action>Toggle</Action>
+          <Keys>123</Keys>
+          <ActivateSound>Deactivate</ActivateSound>
+        </Hotkey>
+      </Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local al = getAddressList()
+for i = 0, al.Count - 1 do
+  local mr = al.getMemoryRecord(i)
+  pcall(function()
+    if mr and not mr.isGroupHeader then mr.Active = false end
+  end)
+end
+MainForm.Caption = "Fatekeeper Trainer v1.0.1  [ALL CHEATS OFF]"
+
+[DISABLE]
+</AssemblerScript>
+    </CheatEntry>
+
+  </CheatEntries>
+
+  <LuaScript>
+--[[ Fatekeeper Trainer v1.0.1  by TINT
+     Game version: current Steam build (AOB-based, version independent)
+     Process: SLASHER-Win64-Shipping.exe
+
+     Hotkeys:
+       F1  -- God Mode + One-Hit-Kill (single hook on the health-write instruction)
+       F12 -- Disable All (panic key)
+
+     Mechanisms:
+       - Auto-attaches on load; polls every 2s until game runs.
+       - Disables all active cheats when game process exits.
+       - Title bar shows attach status and active cheat.
+
+     God Mode + OHK hook:
+       aobscanmodule on  F3 0F 11 76 34 E8 ?? ?? ?? ?? 48 8B F8
+       = movss [rsi+34],xmm6   (game's health write; rsi = character object)
+       rsi+34  = health (float);  rsi+378 = player(!=0)/enemy(==0) discriminator
+       player -> 999 (god mode),  enemy -> 0 (one-hit-kill)
+       Original qteeq offset +5E187A0 died on a patch; AOB now lands at +5E1A140.
+]]
+
+local FK_PROC = "SLASHER-Win64-Shipping.exe"
+local _FK_attached = false
+local _FK_pid      = 0
+
+local function FK_disableAll()
+  local al = getAddressList()
+  for i = 0, al.Count - 1 do
+    local mr = al.getMemoryRecord(i)
+    pcall(function()
+      if mr and not mr.isGroupHeader then mr.Active = false end
+    end)
+  end
+end
+
+local _FK_watchTimer = createTimer(nil, false)
+_FK_watchTimer.Interval = 2000
+_FK_watchTimer.OnTimer = function()
+  local pid = getProcessIDFromProcessName(FK_PROC)
+  if pid and pid ~= 0 then
+    if not _FK_attached or _FK_pid ~= pid then
+      if _FK_attached then FK_disableAll() end
+      openProcess(pid)
+      _FK_attached = true
+      _FK_pid      = pid
+      MainForm.Caption = "Fatekeeper Trainer v1.0.1  [ATTACHED pid=" .. pid .. "]"
+    end
+  else
+    if _FK_attached then
+      FK_disableAll()
+      _FK_attached = false
+      _FK_pid      = 0
+      MainForm.Caption = "Fatekeeper Trainer v1.0.1  [WAITING FOR GAME...]"
+    end
+  end
+end
+_FK_watchTimer.Enabled = true
+
+local _pid0 = getProcessIDFromProcessName(FK_PROC)
+if _pid0 and _pid0 ~= 0 then
+  openProcess(_pid0)
+  _FK_attached = true
+  _FK_pid      = _pid0
+  MainForm.Caption = "Fatekeeper Trainer v1.0.1  [ATTACHED pid=" .. _pid0 .. "]"
+else
+  MainForm.Caption = "Fatekeeper Trainer v1.0.1  [WAITING FOR GAME...]"
+end
+  </LuaScript>
+  <UserdefinedSymbols/>
+</CheatTable>
