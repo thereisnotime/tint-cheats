@@ -1,0 +1,120 @@
+---
+import Base from '../layouts/Base.astro';
+import Disclaimer from '../components/Disclaimer.astro';
+import { url, SITE } from '../utils/url';
+
+const title = 'How to Use Cheat Engine Tables (.CT files) | tint-cheats';
+const description =
+  'Step-by-step guide: download Cheat Engine, open a .CT table, attach it to your game, and click Yes on the Lua script prompt. That is it.';
+const canonical = new URL(url('/how-to-use-cheat-engine'), SITE).href;
+
+const CE_DOWNLOAD = 'https://www.cheatengine.org/downloads.php';
+
+const steps = [
+  {
+    name: 'Install Cheat Engine',
+    text: 'Download Cheat Engine from the official site (cheatengine.org) and install it. Only use the official source. During setup, decline any bundled offers.',
+  },
+  {
+    name: 'Download a table',
+    text: 'Open the table you want on this site and click Download. You get a .CT file directly, with no surveys or redirects. Check the SHA-256 or VirusTotal link if you want to verify it.',
+  },
+  {
+    name: 'Launch the game',
+    text: 'Start the single-player game and load into your save so the process is running.',
+  },
+  {
+    name: 'Open the .CT file',
+    text: 'Open the .CT file in Cheat Engine (double-click it, or File > Open in Cheat Engine).',
+  },
+  {
+    name: 'Attach to the game',
+    text: 'Click the glowing computer icon in the top-left of Cheat Engine and pick the game from the process list.',
+  },
+  {
+    name: 'Click Yes on the Lua prompt',
+    text: 'Cheat Engine will ask whether to run the table\'s Lua script ("This cheat table contains a Lua script. Do you want to run it?"). Click Yes. This is normal and required for most tables to work.',
+  },
+  {
+    name: 'Enable the cheats',
+    text: 'Tick the checkboxes next to the cheats you want, or use the hotkeys listed on the table page. That is it.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to use Cheat Engine tables (.CT files)',
+    description,
+    totalTime: 'PT3M',
+    tool: { '@type': 'HowToTool', name: 'Cheat Engine' },
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+    })),
+  },
+];
+---
+
+<Base title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <section class="section">
+    <p class="breadcrumb"><a href={url('/')}>&larr; All tables</a></p>
+    <h1>How to use Cheat Engine tables</h1>
+    <p class="hero__lead" style="max-width:46rem">
+      A Cheat Engine table is a <code>.CT</code> file you open in Cheat Engine to
+      enable cheats in a single-player game. The whole process takes about a
+      minute. Download Cheat Engine, open the table, attach it to your game, and
+      click <strong>Yes</strong> on the Lua prompt. That is it.
+    </p>
+    <p>
+      <a class="btn btn--primary" href={CE_DOWNLOAD} rel="noopener">
+        Download Cheat Engine (official site)
+      </a>
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="steps-title">
+    <h2 id="steps-title" class="section__title">
+      Steps <span class="section__count">{steps.length}</span>
+    </h2>
+    <ol class="howto">
+      {
+        steps.map((s) => (
+          <li class="howto__step">
+            <h3 class="howto__name">{s.name}</h3>
+            <p class="howto__text">{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="faq-title">
+    <h2 id="faq-title" class="section__title">Common questions</h2>
+    <div class="prose">
+      <h3>Is the Lua prompt safe?</h3>
+      <p>
+        The prompt is Cheat Engine warning you that the table runs a script,
+        which is how most cheats work. Every table here is open source and
+        checksummed, so you can read the script before running it. Click
+        <strong>Yes</strong> to let it run.
+      </p>
+      <h3>My downloaded file opened as text instead of saving.</h3>
+      <p>
+        Use the <strong>Download</strong> button on a table page (it saves the
+        <code>.CT</code> file directly). If your browser still shows the text,
+        right-click the button and choose &ldquo;Save link as&rdquo;.
+      </p>
+      <h3>A cheat stopped working after a game update.</h3>
+      <p>
+        Game patches can move things around. Open an issue on the table page with
+        your game version and which cheat broke, and it can be updated.
+      </p>
+    </div>
+  </section>
+
+  <Disclaimer />
+</Base>

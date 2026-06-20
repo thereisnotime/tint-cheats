@@ -1,6 +1,7 @@
 ---
 import checksums from '../data/checksums.json';
 import Icon from './Icon.astro';
+import { url } from '../utils/url';
 
 interface FileEntry {
   name: string;
@@ -17,6 +18,7 @@ interface ChecksumRecord {
   sha256?: string;
   size?: number;
   virustotal?: string;
+  download?: string;
   raw?: string;
   history?: string;
 }
@@ -41,6 +43,7 @@ const rows = files.map((file) => {
   const key = `${folder}/${file.name}`;
   const rec = checks[key] ?? {};
   const sha = rec.sha256;
+  const downloadUrl = url(rec.download ?? `/downloads/${folder}/${file.name}`);
   const rawUrl = rec.raw ?? `${RAW_BASE}/${folder}/${file.name}`;
   const historyUrl = rec.history ?? `${HISTORY_BASE}/${folder}/${file.name}`;
   const vt =
@@ -52,6 +55,7 @@ const rows = files.map((file) => {
     name: file.name,
     sha,
     size: fmtSize(rec.size),
+    downloadUrl,
     rawUrl,
     historyUrl,
     vt,
@@ -84,7 +88,7 @@ const rows = files.map((file) => {
         </dl>
 
         <div class="dl-card__actions">
-          <a class="btn btn--primary" href={r.rawUrl} download rel="noopener">
+          <a class="btn btn--primary" href={r.downloadUrl} download={r.name} type="application/octet-stream">
             <Icon name="download" size={18} /> Download
           </a>
           {r.vt && (
@@ -92,8 +96,11 @@ const rows = files.map((file) => {
               Verify on VirusTotal
             </a>
           )}
+          <a class="link-quiet" href={r.rawUrl} rel="noopener">
+            View raw
+          </a>
           <a class="link-quiet" href={r.historyUrl} rel="noopener">
-            View source / history
+            History
           </a>
         </div>
 

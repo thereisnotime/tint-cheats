@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Generate src/data/checksums.json from the .CT files declared in each table.
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, statSync, copyFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
@@ -10,6 +10,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 const tablesDir = join(root, 'tables');
 const outFile = join(root, 'src', 'data', 'checksums.json');
+// .CT files are copied here so they download from our own origin. GitHub raw
+// URLs serve the file inline (text/plain), which opens in the browser instead
+// of downloading. A same-origin file + the `download` attribute forces a save.
+const downloadsDir = join(root, 'public', 'downloads');
 
 const RAW_BASE = 'https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables';
 const HISTORY_BASE = 'https://github.com/thereisnotime/tint-cheats/commits/main/tables';
@@ -69,10 +73,15 @@ for (const folder of listTableFolders()) {
       continue;
     }
     const { sha256, size } = hashFile(filePath);
+    // Copy into public/downloads/<folder>/<name> for same-origin downloads.
+    const destDir = join(downloadsDir, folder);
+    mkdirSync(destDir, { recursive: true });
+    copyFileSync(filePath, join(destDir, name));
     out[key] = {
       sha256,
       size,
       virustotal: `${VT_BASE}/${sha256}`,
+      download: `/downloads/${folder}/${name}`,
       raw: `${RAW_BASE}/${folder}/${name}`,
       history: `${HISTORY_BASE}/${folder}/${name}`,
     };

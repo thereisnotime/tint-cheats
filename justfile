@@ -74,7 +74,7 @@ new-table slug game:
     printf "{{GREEN}}created{{RESET}} %s\n" "$dst"
 
 # DEV: start the Astro dev server
-dev:
+dev: checksums
     npm run dev
 
 # DEV: build then serve the static output locally

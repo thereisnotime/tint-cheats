@@ -521,10 +521,15 @@ samp {
   margin-top: var(--space-4);
 }
 .table-head__desc {
-  flex: 1 1 22rem;
-  margin: 0;
+  margin: var(--space-4) 0 0;
   color: var(--text-muted);
   font-size: 1.02rem;
+}
+.table-head__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 /* Screenshot gallery */
@@ -1237,6 +1242,50 @@ samp {
   font-size: 0.9rem;
 }
 .breadcrumb a {
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   How-to steps (guide page)
+   -------------------------------------------------------------------------- */
+
+.howto {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: howto;
+  display: grid;
+  gap: var(--space-3);
+}
+.howto__step {
+  counter-increment: howto;
+  position: relative;
+  padding: var(--space-4) var(--space-5) var(--space-4) calc(var(--space-7) + var(--space-3));
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.howto__step::before {
+  content: counter(howto);
+  position: absolute;
+  left: var(--space-4);
+  top: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+}
+.howto__name {
+  margin: 0 0 var(--space-1);
+  font-size: 1.05rem;
+}
+.howto__text {
+  margin: 0;
   color: var(--text-muted);
 }
 

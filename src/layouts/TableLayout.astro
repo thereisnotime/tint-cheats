@@ -102,17 +102,33 @@ const ogImage = data.cover?.src;
     }
 
     {
-      (data.game_description || data.trailer) && (
-        <div class="table-head__about">
-          {data.game_description && <p class="table-head__desc">{data.game_description}</p>}
-          {data.trailer && (
-            <a class="btn btn--ghost" href={data.trailer} rel="noopener">
-              <Icon name="play" size={18} /> Watch trailer
-            </a>
-          )}
-        </div>
-      )
+      data.game_description && <p class="table-head__desc">{data.game_description}</p>
     }
+
+    <div class="table-head__actions">
+      {
+        data.files.length > 0 && (
+          <a
+            class="btn btn--primary"
+            href={url(`/downloads/${entry.id}/${data.files[0].name}`)}
+            download={data.files[0].name}
+            type="application/octet-stream"
+          >
+            <Icon name="download" size={18} /> Download table
+          </a>
+        )
+      }
+      {
+        data.trailer && (
+          <a class="btn btn--ghost" href={data.trailer} rel="noopener">
+            <Icon name="play" size={18} /> Watch trailer
+          </a>
+        )
+      }
+      <a class="btn btn--ghost" href={url('/how-to-use-cheat-engine')}>
+        <Icon name="search" size={18} /> How to use
+      </a>
+    </div>
 
     {
       data.cover && (
