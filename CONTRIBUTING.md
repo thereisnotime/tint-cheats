@@ -15,7 +15,7 @@ Thanks for wanting to add a table. The process is short.
    ```
    This creates `tables/<slug>/` with a starter `index.md` and a `media/` folder.
 4. Fill in `index.md`. Cover every section: the frontmatter fields (title, game, status, table version, tested game version, files, description) and the notes below it. The full schema lives in [`src/content.config.ts`](src/content.config.ts).
-5. Drop your `.CT` file into the folder and a cover image into `media/`. List each downloadable file under `files:` in the frontmatter.
+5. Drop your `.CT` file into the folder and a cover image into `media/`. List each downloadable file under `files:` in the frontmatter. **Name table files `tint-<game-slug>-<table_version>.ct`** (lowercase), e.g. `tint-20-minutes-till-dawn-1.7.0.ct`. The validator enforces this.
 6. Test the table in Cheat Engine against a clearly stated game version, and record that version under `game_versions:`.
 7. Run the full gate:
    ```bash
@@ -33,3 +33,10 @@ Thanks for wanting to add a table. The process is short.
 - Keep it honest: state the real status (`working`, `outdated`, `wip`, `broken`) and the real tested version.
 
 If something is unclear, open an issue before sinking time into a PR.
+
+## Community
+
+Questions or want help getting a table merged? Join the chat:
+
+- Telegram: https://t.me/+xgtzaZBrKRA2OWI8
+- Matrix: https://matrix.to/#/!GkVomrhlzPROGFzueG:matrix.org?via=matrix.org

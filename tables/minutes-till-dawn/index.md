@@ -54,7 +54,7 @@ cheats:
     hotkey: "F12"
     description: "Turns every active script back off."
 files:
-  - name: "minutes-till-dawn.CT"
+  - name: "tint-20-minutes-till-dawn-1.7.0.ct"
     label: "20 Minutes Till Dawn Trainer (v1.7)"
 cover: ./media/cover.jpg
 game_logo: ./media/logo.png
@@ -93,7 +93,7 @@ Cheat Engine if they clash with the game.
 ## Installation & Usage
 
 1. Install Cheat Engine 7.5 or newer.
-2. Download `minutes-till-dawn.CT` from the download box on this page.
+2. Download `tint-20-minutes-till-dawn-1.7.0.ct` from the download box on this page.
 3. Verify the SHA-256 against the value shown here (optional but recommended),
    or check the VirusTotal link.
 4. Launch 20 Minutes Till Dawn.

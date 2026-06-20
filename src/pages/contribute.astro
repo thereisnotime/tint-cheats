@@ -1,0 +1,103 @@
+---
+import Base from '../layouts/Base.astro';
+import CommunityCallout from '../components/CommunityCallout.astro';
+import { url, SITE } from '../utils/url';
+
+const REPO = 'https://github.com/thereisnotime/tint-cheats';
+const CONTRIBUTING = `${REPO}/blob/main/CONTRIBUTING.md`;
+const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
+
+const title = 'Contribute a Cheat Table | tint-cheats';
+const description =
+  'How to contribute a Cheat Engine table to tint-cheats: fork the repo, scaffold a table folder, document it, follow the naming convention, and open a pull request.';
+const canonical = new URL(url('/contribute'), SITE).href;
+
+const steps = [
+  {
+    name: 'Fork and set up',
+    text: 'Fork the repo on GitHub, clone your fork, and run `just setup` (installs the pinned Node via asdf and the dependencies).',
+  },
+  {
+    name: 'Scaffold a table',
+    text: 'Run `just new-table <game-slug> "<Game Name>"`. This copies the template into tables/<game-slug>/ with an index.md, a media/ folder, and a starter .CT.',
+  },
+  {
+    name: 'Add your .CT and media',
+    text: 'Drop your Cheat Engine table file in the folder and add a cover plus any screenshots under media/. Name the file using the convention below.',
+  },
+  {
+    name: 'Fill in index.md',
+    text: 'Set the frontmatter (game, status, table_version, author, game_versions you tested, cheats with hotkeys, tags) and write the documentation sections. Keep it honest about what was tested.',
+  },
+  {
+    name: 'Validate locally',
+    text: 'Run `just verify` (validate + type check + build). It enforces the schema, checks the file naming convention, and generates checksums. Fix anything it flags.',
+  },
+  {
+    name: 'Open a pull request',
+    text: 'Push to your fork and open a PR. Fill in the template (which game, what version you tested on). Checksums and the download copy are generated automatically.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to contribute a Cheat Engine table to tint-cheats',
+    description,
+    step: steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, name: s.name, text: s.text })),
+  },
+];
+---
+
+<Base title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <section class="section">
+    <p class="breadcrumb"><a href={url('/')}>&larr; All tables</a></p>
+    <h1>Contribute a cheat table</h1>
+    <p class="hero__lead" style="max-width:46rem">
+      tint-cheats is open source and community-driven. If you make Cheat Engine
+      tables for single-player games, add them here so people get a trustworthy,
+      checksummed, no-gate download. Here is the whole process.
+    </p>
+    <p>
+      <a class="btn btn--primary" href={CONTRIBUTING} rel="noopener">Full CONTRIBUTING.md</a>
+      <a class="btn btn--ghost" href={REQUEST_CHEAT} rel="noopener">Just request one instead</a>
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="steps-title">
+    <h2 id="steps-title" class="section__title">Steps <span class="section__count">{steps.length}</span></h2>
+    <ol class="howto">
+      {steps.map((s) => (
+        <li class="howto__step">
+          <h3 class="howto__name">{s.name}</h3>
+          <p class="howto__text" set:html={s.text.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="rules-title">
+    <h2 id="rules-title" class="section__title">Rules and conventions</h2>
+    <div class="prose">
+      <ul>
+        <li>
+          <strong>File naming.</strong> Table files must be named
+          <code>tint-&lt;game-slug&gt;-&lt;table_version&gt;.ct</code>, lowercase.
+          Example: <code>tint-20-minutes-till-dawn-1.7.0.ct</code>. The build fails
+          if a file does not follow this.
+        </li>
+        <li><strong>Single-player only.</strong> No online or multiplayer tables. They will be rejected.</li>
+        <li><strong>No piracy or DRM circumvention.</strong> Tables are for cheats in games people own.</li>
+        <li><strong>Be honest.</strong> List the exact game version/build you tested on, and mark untested versions as such.</li>
+        <li><strong>Credit your sources.</strong> If you built on someone else's pointers or scripts, say so.</li>
+        <li><strong>No gates.</strong> Never add surveys, shorteners, ads, or redirects. The whole point is trust.</li>
+      </ul>
+    </div>
+  </section>
+
+  <CommunityCallout
+    heading="Questions before you start?"
+    blurb="Ask in the community chat. Happy to help you get your first table merged."
+  />
+</Base>

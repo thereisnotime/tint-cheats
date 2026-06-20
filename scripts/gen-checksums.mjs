@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Generate src/data/checksums.json from the .CT files declared in each table.
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, statSync, copyFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, statSync, copyFileSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
@@ -62,6 +62,9 @@ function hashFile(path) {
 
 const out = {};
 let counted = 0;
+
+// Wipe stale download copies so renamed/removed files do not linger.
+rmSync(downloadsDir, { recursive: true, force: true });
 
 for (const folder of listTableFolders()) {
   for (const name of declaredFiles(folder)) {

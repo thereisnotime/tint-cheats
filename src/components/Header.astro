@@ -20,15 +20,113 @@ const REQUEST_CHEAT = `${REPO}/issues/new?template=request-cheat.yml`;
       <a href={url('/how-to-use-cheat-engine')}>How to use</a>
       <a href={REPORT_ISSUE} rel="noopener">Report issue</a>
       <a class="nav-cta" href={REQUEST_CHEAT} rel="noopener">Request a cheat</a>
+
+      <form class="header-search" role="search" method="get" action={url('/')}>
+        <button type="button" class="header-search__toggle" aria-label="Search tables" aria-expanded="false">
+          <Icon name="search" size={18} />
+        </button>
+        <input
+          type="search"
+          name="q"
+          class="header-search__input"
+          placeholder="Search tables…"
+          aria-label="Search tables"
+          autocomplete="off"
+          tabindex="-1"
+        />
+      </form>
+
+      <button type="button" class="nav-icon theme-toggle" id="theme-toggle" data-mode="system" aria-label="Theme: system">
+        <Icon name="monitor" class="theme-toggle__i theme-toggle__i--system" size={18} />
+        <Icon name="sun" class="theme-toggle__i theme-toggle__i--light" size={18} />
+        <Icon name="moon" class="theme-toggle__i theme-toggle__i--dark" size={18} />
+      </button>
+
+      <a class="nav-star" href={REPO} rel="noopener" aria-label="Star tint-cheats on GitHub">
+        <Icon name="star" size={16} /> Star
+      </a>
+
+      <span class="nav-sep" aria-hidden="true"></span>
+      <a class="nav-icon" href={REPO} rel="noopener" aria-label="View source on GitHub" title="GitHub">
+        <Icon name="github" size={19} />
+      </a>
       <a class="nav-icon" href={TELEGRAM} rel="noopener" aria-label="Join our Telegram group" title="Telegram">
         <Icon name="telegram" size={18} />
       </a>
       <a class="nav-icon" href={MATRIX} rel="noopener" aria-label="Join our Matrix room" title="Matrix">
         <Icon name="matrix" size={18} />
       </a>
-      <a class="nav-star" href={REPO} rel="noopener" aria-label="Star tint-cheats on GitHub">
-        <Icon name="star" size={16} /> Star
-      </a>
     </nav>
   </div>
 </header>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.header-search');
+  if (form) {
+    const toggle = form.querySelector<HTMLButtonElement>('.header-search__toggle');
+    const input = form.querySelector<HTMLInputElement>('.header-search__input');
+    const open = () => {
+      form.classList.add('is-open');
+      toggle?.setAttribute('aria-expanded', 'true');
+      input?.removeAttribute('tabindex');
+      input?.focus();
+    };
+    const close = () => {
+      form.classList.remove('is-open');
+      toggle?.setAttribute('aria-expanded', 'false');
+      input?.setAttribute('tabindex', '-1');
+    };
+    toggle?.addEventListener('click', () => {
+      if (form.classList.contains('is-open')) {
+        if (input && input.value.trim() !== '') form.submit();
+        else close();
+      } else {
+        open();
+      }
+    });
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { close(); toggle?.focus(); }
+    });
+    document.addEventListener('click', (e) => {
+      if (!form.contains(e.target as Node) && (!input || input.value.trim() === '')) close();
+    });
+  }
+
+  // Theme switcher: cycles system -> light -> dark. Default = follow OS.
+  const themeBtn = document.getElementById('theme-toggle');
+  if (themeBtn) {
+    const order = ['system', 'light', 'dark'];
+    const labels: Record<string, string> = {
+      system: 'Theme: system (follow OS)',
+      light: 'Theme: light',
+      dark: 'Theme: dark',
+    };
+    const read = () => {
+      try {
+        const t = localStorage.getItem('theme');
+        return t === 'light' || t === 'dark' ? t : 'system';
+      } catch {
+        return 'system';
+      }
+    };
+    const applyAttr = (mode: string) => {
+      if (mode === 'light' || mode === 'dark') document.documentElement.setAttribute('data-theme', mode);
+      else document.documentElement.removeAttribute('data-theme');
+    };
+    const render = (mode: string) => {
+      themeBtn.dataset.mode = mode;
+      themeBtn.setAttribute('aria-label', labels[mode]);
+      themeBtn.title = labels[mode];
+    };
+    render(read());
+    themeBtn.addEventListener('click', () => {
+      const next = order[(order.indexOf(read()) + 1) % order.length];
+      try {
+        if (next === 'system') localStorage.removeItem('theme');
+        else localStorage.setItem('theme', next);
+      } catch {}
+      applyAttr(next);
+      render(next);
+    });
+  }
+</script>

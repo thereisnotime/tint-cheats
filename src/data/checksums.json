@@ -1,18 +1,18 @@
 {
-  "minutes-till-dawn/minutes-till-dawn.CT": {
+  "minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct": {
     "sha256": "97303f375c0850e2b845d01985884e4bbbfc3706f7e679f31ad2e15bf1ce9cef",
     "size": 29879,
     "virustotal": "https://www.virustotal.com/gui/file/97303f375c0850e2b845d01985884e4bbbfc3706f7e679f31ad2e15bf1ce9cef",
-    "download": "/downloads/minutes-till-dawn/minutes-till-dawn.CT",
-    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/minutes-till-dawn/minutes-till-dawn.CT",
-    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/minutes-till-dawn/minutes-till-dawn.CT"
+    "download": "/downloads/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.0.ct"
   },
-  "sample-template/sample-template.CT": {
+  "sample-template/tint-sample-game-0.1.0.ct": {
     "sha256": "2e746c4842a84c49c833be6f5d6de06611f7d2e0bccc29db1dad2aefb85ff48b",
     "size": 339,
     "virustotal": "https://www.virustotal.com/gui/file/2e746c4842a84c49c833be6f5d6de06611f7d2e0bccc29db1dad2aefb85ff48b",
-    "download": "/downloads/sample-template/sample-template.CT",
-    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/sample-template/sample-template.CT",
-    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/sample-template/sample-template.CT"
+    "download": "/downloads/sample-template/tint-sample-game-0.1.0.ct",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/sample-template/tint-sample-game-0.1.0.ct",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/sample-template/tint-sample-game-0.1.0.ct"
   }
 }

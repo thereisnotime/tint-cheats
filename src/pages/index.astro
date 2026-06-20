@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TableCard from '../components/TableCard.astro';
 import TrustBanner from '../components/TrustBanner.astro';
+import CommunityCallout from '../components/CommunityCallout.astro';
 import Icon from '../components/Icon.astro';
 import { url, SITE } from '../utils/url';
 
@@ -88,24 +89,33 @@ const jsonLd = [
     <TrustBanner />
   </section>
 
+  <CommunityCallout
+    heading="Join the TINT Cheats community"
+    blurb="Get notified about new tables and updates, request cheats, report breakage, and chat with other players. Free, no spam, leave anytime."
+  />
+
   <section id="tables" class="section" aria-labelledby="tables-heading">
+    {tables.length > 0 && (
+      <form class="searchbar" role="search" id="search-form" autocomplete="off">
+        <Icon name="search" class="searchbar__icon" size={20} />
+        <input
+          type="search"
+          id="table-search"
+          class="searchbar__input"
+          name="q"
+          placeholder="Search games, tags, or cheats…"
+          aria-label="Search tables"
+        />
+        <button type="button" class="searchbar__clear" id="search-clear" aria-label="Clear search" hidden>
+          <span aria-hidden="true">×</span>
+        </button>
+      </form>
+    )}
+
     <div class="section__bar">
       <h2 id="tables-heading" class="section__title section__title--bare">
-        Tables <span class="section__count">{tables.length}</span>
+        Tables <span class="section__count" id="table-count">{tables.length}</span>
       </h2>
-      {tables.length > 0 && (
-        <div class="search">
-          <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m21 21-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/></svg>
-          <input
-            type="search"
-            id="table-search"
-            class="search__input"
-            placeholder="Search by game, tag, or cheat…"
-            aria-label="Search tables"
-            autocomplete="off"
-          />
-        </div>
-      )}
     </div>
 
     {tables.length === 0 ? (
@@ -174,14 +184,25 @@ const jsonLd = [
       <Icon name="star" size={18} /> Star on GitHub
     </a>
   </section>
+
+  <CommunityCallout
+    heading="Join the TINT Cheats community"
+    blurb="Get notified about new tables and updates, request cheats, report breakage, and chat with other players. Free, no spam, leave anytime."
+  />
 </Base>
 
 <script>
+  const form = document.getElementById('search-form');
   const input = document.getElementById('table-search') as HTMLInputElement | null;
   const list = document.getElementById('table-list');
   const emptyMsg = document.getElementById('search-empty');
+  const clearBtn = document.getElementById('search-clear');
+  const count = document.getElementById('table-count');
+
   if (input && list) {
     const items = Array.from(list.querySelectorAll<HTMLElement>('.table-grid__item'));
+    const total = items.length;
+
     const apply = () => {
       const q = input.value.trim().toLowerCase();
       let visible = 0;
@@ -192,7 +213,21 @@ const jsonLd = [
         if (match) visible++;
       }
       if (emptyMsg) emptyMsg.hidden = visible !== 0;
+      if (count) count.textContent = q === '' ? String(total) : `${visible}/${total}`;
+      if (clearBtn) clearBtn.hidden = q === '';
     };
+
+    // Prefill from ?q= so the header search (on any page) can drive this.
+    const q = new URLSearchParams(window.location.search).get('q');
+    if (q) input.value = q;
+
     input.addEventListener('input', apply);
+    form?.addEventListener('submit', (e) => e.preventDefault());
+    clearBtn?.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      apply();
+    });
+    apply();
   }
 </script>

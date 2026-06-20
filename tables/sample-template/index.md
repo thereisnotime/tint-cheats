@@ -33,7 +33,8 @@ cheats:
     hotkey: "F3"
     description: "Stamina bar stays full. Safe to leave on."
 files:
-  - name: "sample-template.CT"
+  # Convention: tint-<game-slug>-<table_version>.ct
+  - name: "tint-sample-game-0.1.0.ct"
     label: "Sample table (v0.1.0)"
 cover: ./media/cover.png
 # Optional media/info fields (remove any you do not use):
@@ -71,7 +72,7 @@ recommended toggles, or warnings.
 ## Installation & Usage
 
 1. Install Cheat Engine from the official site (cheatengine.org).
-2. Download `sample-template.CT` from this folder.
+2. Download `tint-sample-game-0.1.0.ct` from this folder.
 3. Launch the game and load into your save.
 4. Open Cheat Engine and open the `.CT` file (File > Open).
 5. Attach Cheat Engine to the running game process (click the computer icon, pick the game).

@@ -24,6 +24,13 @@ function folders() {
     .sort();
 }
 
+function slugify(s) {
+  return String(s)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function fileExists(folder, rel) {
   // strip leading ./ and normalize, resolve relative to the table folder
   const clean = rel.replace(/^\.\//, '');
@@ -91,6 +98,16 @@ for (const folder of folders()) {
       }
       if (!fileExists(folder, f.name)) {
         errors.push(`files[].name not found in folder: ${f.name}`);
+      }
+      // naming convention: tint-<game-slug>-<version>.ct
+      if (/\.ct$/i.test(f.name) && data.game && data.table_version) {
+        const prefix = `tint-${slugify(data.game)}-`;
+        const canonical = `${prefix}${data.table_version}.ct`;
+        if (!f.name.toLowerCase().startsWith(prefix)) {
+          errors.push(`"${f.name}" must follow tint-<game>-<version>.ct (expected like "${canonical}")`);
+        } else if (f.name !== f.name.toLowerCase()) {
+          errors.push(`"${f.name}" should be lowercase (expected like "${canonical}")`);
+        }
       }
     }
   }
