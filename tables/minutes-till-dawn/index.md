@@ -120,6 +120,9 @@ with your game version and which function broke.
 ## Changelog
 
 ### 1.7.1
+- Fixed a "data error" when opening the table in Cheat Engine: removed the UTF-8
+  byte-order mark (CE's parser rejects a BOM before the XML declaration) and
+  escaped a stray `<` in the XP Boost script.
 - Added the tint-cheats community/info rows (official site, Telegram, Matrix) and
   visual separators to the table. Hardened Mono attach with a lazy `MTD_initMono`
   guard so loading the table before the game is running no longer errors. No
