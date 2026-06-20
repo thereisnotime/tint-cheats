@@ -4,6 +4,8 @@ game: "Minutes Till Dawn"
 slug: "minutes-till-dawn"
 status: working
 table_version: "1.7.0"
+author: "TINT"
+author_url: "https://github.com/thereisnotime"
 ce_version: ">=7.5"
 game_versions:
   - version: "Current Steam build"

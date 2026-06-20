@@ -9,6 +9,8 @@ const tables = defineCollection({
     slug: z.string().optional(),
     status: z.enum(['working', 'outdated', 'wip', 'broken']),
     table_version: z.string(),
+    author: z.string().optional(),
+    author_url: z.string().url().optional(),
     ce_version: z.string().default('>=7.5'),
     game_versions: z.array(z.object({
       version: z.string(),

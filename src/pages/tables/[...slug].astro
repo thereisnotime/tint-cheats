@@ -43,6 +43,13 @@ const jsonLd = [
     softwareVersion: data.table_version,
     description: data.description,
     url: pageUrl,
+    ...(data.author && {
+      author: {
+        '@type': 'Person',
+        name: data.author,
+        ...(data.author_url && { url: data.author_url }),
+      },
+    }),
     offers: {
       '@type': 'Offer',
       price: '0',

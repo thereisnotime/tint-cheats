@@ -4,6 +4,8 @@ game: "Sample Game"
 slug: "sample-template"
 status: wip
 table_version: "0.1.0"
+author: "Your name or handle"      # who made the table
+author_url: "https://github.com/your-handle"   # optional link to your profile
 ce_version: ">=7.5"
 game_versions:
   - version: "1.0.0"

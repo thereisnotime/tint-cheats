@@ -63,6 +63,20 @@ const ogImage = data.cover?.src;
       <span class="meta-item">
         <dt>Table</dt><dd>v{data.table_version}</dd>
       </span>
+      {
+        data.author && (
+          <span class="meta-item">
+            <dt>By</dt>
+            <dd>
+              {data.author_url ? (
+                <a href={data.author_url} rel="noopener author">{data.author}</a>
+              ) : (
+                data.author
+              )}
+            </dd>
+          </span>
+        )
+      }
       <span class="meta-item">
         <dt>Cheat Engine</dt><dd>{data.ce_version}</dd>
       </span>
