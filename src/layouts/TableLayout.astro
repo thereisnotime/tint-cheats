@@ -196,15 +196,15 @@ const ogImage = data.cover?.src;
     />
   </section>
 
+  <CommunityCallout
+    blurb={`Get notified when the ${data.game} table updates, request new cheats, or report breakage. Join whichever you prefer.`}
+  />
+
   <section class="section">
     <div class="prose">
       <slot />
     </div>
   </section>
-
-  <CommunityCallout
-    blurb={`Get notified when the ${data.game} table updates, request new cheats, or report breakage. Join whichever you prefer.`}
-  />
 
   <Disclaimer singleplayerOnly={data.singleplayer_only} />
 </Base>
