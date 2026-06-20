@@ -1,5 +1,6 @@
 ---
 import checksums from '../data/checksums.json';
+import Icon from './Icon.astro';
 
 interface FileEntry {
   name: string;
@@ -84,7 +85,7 @@ const rows = files.map((file) => {
 
         <div class="dl-card__actions">
           <a class="btn btn--primary" href={r.rawUrl} download rel="noopener">
-            <span aria-hidden="true">⬇</span> Download
+            <Icon name="download" size={18} /> Download
           </a>
           {r.vt && (
             <a class="btn btn--ghost" href={r.vt} rel="noopener">
@@ -97,7 +98,7 @@ const rows = files.map((file) => {
         </div>
 
         <p class="dl-card__nogate">
-          <span aria-hidden="true">✓</span> Direct download — no gates, no
+          <Icon name="check" size={15} /> Direct download — no gates, no
           redirects.
         </p>
       </article>

@@ -29,6 +29,10 @@ const tables = defineCollection({
     files: z.array(z.object({ name: z.string(), label: z.string() })).min(1),
     virustotal: z.string().url().optional(),
     cover: image().optional(),
+    game_logo: image().optional(),
+    screenshots: z.array(image()).default([]),
+    trailer: z.string().url().optional(),
+    game_description: z.string().optional(),
     description: z.string().max(200),
   }),
 });

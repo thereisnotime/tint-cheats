@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TableCard from '../components/TableCard.astro';
 import TrustBanner from '../components/TrustBanner.astro';
+import Icon from '../components/Icon.astro';
 import { url, SITE } from '../utils/url';
 
 const REPO = 'https://github.com/thereisnotime/tint-cheats';
@@ -81,10 +82,7 @@ const jsonLd = [
   <section class="hero">
     <h1 class="hero__title">Free &amp; Open-Source Cheat Engine Tables &amp; Trainers</h1>
     <p class="hero__lead">
-      Hand-curated Cheat Engine tables for single-player games — every one
-      version-controlled, checksum-verified, and VirusTotal-scanned. No paywalls,
-      no survey-locked downloads, no malware-laden "trainers". Read the source,
-      check the hash, then play.
+      Verified tables for single-player games. Open source, checksummed, no gates.
     </p>
     <TrustBanner />
   </section>
@@ -156,10 +154,10 @@ const jsonLd = [
   <section class="section" aria-labelledby="trust-heading">
     <h2 id="trust-heading" class="section__title">How it works</h2>
     <ul class="trust-list">
-      <li><span class="trust-list__icon" aria-hidden="true">🔍</span><div><strong>Verifiable.</strong> Tables live in a public GitHub repo. Inspect the diff and the source before you run anything.</div></li>
-      <li><span class="trust-list__icon" aria-hidden="true">🔐</span><div><strong>Checksums.</strong> Every downloadable file ships with a published SHA-256 so you can confirm you got exactly what we built.</div></li>
-      <li><span class="trust-list__icon" aria-hidden="true">🛡️</span><div><strong>VirusTotal.</strong> Files are scanned and the scan link is included on each table page.</div></li>
-      <li><span class="trust-list__icon" aria-hidden="true">🎮</span><div><strong>Single-player only.</strong> These are for offline play. We do not support online or competitive cheating.</div></li>
+      <li><Icon name="search" class="trust-list__icon" size={22} /><div><strong>Verifiable.</strong> Tables live in a public GitHub repo. Inspect the diff and the source before you run anything.</div></li>
+      <li><Icon name="lock" class="trust-list__icon" size={22} /><div><strong>Checksums.</strong> Every downloadable file ships with a published SHA-256 so you can confirm you got exactly what we built.</div></li>
+      <li><Icon name="shield" class="trust-list__icon" size={22} /><div><strong>VirusTotal.</strong> Files are scanned and the scan link is included on each table page.</div></li>
+      <li><Icon name="gamepad" class="trust-list__icon" size={22} /><div><strong>Single-player only.</strong> These are for offline play. We do not support online or competitive cheating.</div></li>
     </ul>
   </section>
 
@@ -172,7 +170,7 @@ const jsonLd = [
       </p>
     </div>
     <a class="btn btn--star" href={REPO} rel="noopener">
-      <span aria-hidden="true">★</span> Star on GitHub
+      <Icon name="star" size={18} /> Star on GitHub
     </a>
   </section>
 </Base>

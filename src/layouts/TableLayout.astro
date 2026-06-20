@@ -8,6 +8,7 @@ import StatusBadge from '../components/StatusBadge.astro';
 import CompatibilityMatrix from '../components/CompatibilityMatrix.astro';
 import ChecksumBox from '../components/ChecksumBox.astro';
 import FeatureList from '../components/FeatureList.astro';
+import Icon from '../components/Icon.astro';
 import { url } from '../utils/url';
 
 interface Props {
@@ -41,6 +42,17 @@ const ogImage = data.cover?.src;
   <TrustBanner />
 
   <header class="table-head">
+    {
+      data.game_logo && (
+        <Image
+          class="table-head__logo"
+          src={data.game_logo}
+          alt={`${data.game} logo`}
+          height={72}
+          loading="eager"
+        />
+      )
+    }
     <h1>{data.title}</h1>
     <div class="table-head__meta">
       <StatusBadge status={data.status} />
@@ -76,6 +88,19 @@ const ogImage = data.cover?.src;
     }
 
     {
+      (data.game_description || data.trailer) && (
+        <div class="table-head__about">
+          {data.game_description && <p class="table-head__desc">{data.game_description}</p>}
+          {data.trailer && (
+            <a class="btn btn--ghost" href={data.trailer} rel="noopener">
+              <Icon name="play" size={18} /> Watch trailer
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    {
       data.cover && (
         <div class="table-head__cover">
           <Image
@@ -97,6 +122,31 @@ const ogImage = data.cover?.src;
           Cheats <span class="section__count">{data.cheats.length}</span>
         </h2>
         <FeatureList cheats={data.cheats} />
+      </section>
+    )
+  }
+
+  {
+    data.screenshots.length > 0 && (
+      <section class="section" aria-labelledby="shots-title">
+        <h2 id="shots-title" class="section__title">
+          Screenshots <span class="section__count">{data.screenshots.length}</span>
+        </h2>
+        <ul class="gallery" role="list">
+          {data.screenshots.map((shot, i) => (
+            <li>
+              <a class="gallery__item" href={shot.src} target="_blank" rel="noopener">
+                <Image
+                  src={shot}
+                  alt={`${data.game} screenshot ${i + 1}`}
+                  widths={[400, 800]}
+                  sizes="(max-width: 48rem) 100vw, 24rem"
+                  loading="lazy"
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
     )
   }

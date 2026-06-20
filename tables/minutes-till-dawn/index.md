@@ -55,6 +55,7 @@ files:
   - name: "minutes-till-dawn.CT"
     label: "Minutes Till Dawn Trainer (v1.7)"
 cover: ./media/cover.png
+game_description: "Minutes Till Dawn is a survival roguelite shooter where you fend off endless swarms of monsters until dawn, picking powerful upgrades between waves. Built by flanne and published by Erabit Studios."
 description: "Free, open-source Cheat Engine table for Minutes Till Dawn: XP boost, ammo lock, unlimited souls, freeze timer, rapid fire, one-hit kills and more."
 ---
 

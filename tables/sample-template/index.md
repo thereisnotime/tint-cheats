@@ -34,6 +34,13 @@ files:
   - name: "sample-template.CT"
     label: "Sample table (v0.1.0)"
 cover: ./media/cover.png
+# Optional media/info fields (remove any you do not use):
+game_logo: ./media/logo.png          # transparent PNG works best
+game_description: "A one or two sentence description of the game itself (genre, premise). Shown near the top of the page and used for SEO."
+trailer: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"   # link to the game's trailer
+screenshots:
+  - ./media/screenshot-1.png
+  - ./media/screenshot-2.png
 description: "Template table showing the structure every tint-cheats entry follows. Copy this folder to start a new table."
 ---
 

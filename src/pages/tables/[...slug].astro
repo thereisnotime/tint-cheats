@@ -18,11 +18,21 @@ const { Content } = await render(entry);
 const pageUrl = new URL(url('/tables/' + entry.id), SITE).href;
 const { data } = entry;
 
+const abs = (src?: string) => (src ? new URL(src, SITE).href : undefined);
+
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'VideoGame',
     name: data.game,
+    ...(data.game_description && { description: data.game_description }),
+    ...(data.game_logo && { image: abs(data.game_logo.src) }),
+    ...(data.trailer && {
+      trailer: { '@type': 'VideoObject', name: `${data.game} trailer`, url: data.trailer },
+    }),
+    ...(data.screenshots.length > 0 && {
+      screenshot: data.screenshots.map((s) => abs(s.src)),
+    }),
   },
   {
     '@context': 'https://schema.org',

@@ -3,11 +3,13 @@ interface Props {
   singleplayerOnly?: boolean;
 }
 
+import Icon from './Icon.astro';
+
 const { singleplayerOnly = true }: Props = Astro.props;
 ---
 
 <aside class="banner banner--warn" role="note" aria-label="Usage disclaimer">
-  <span class="banner__icon" aria-hidden="true">⚠️</span>
+  <Icon name="alert" class="banner__icon" size={22} />
   <div class="banner__body">
     <strong>Use responsibly.</strong>
     <ul>

@@ -10,6 +10,8 @@ interface Props {
   gameVersions: GameVersion[];
 }
 
+import Icon from './Icon.astro';
+
 const { gameVersions = [] }: Props = Astro.props;
 const hasData = gameVersions.length > 0;
 ---
@@ -36,11 +38,11 @@ const hasData = gameVersions.length > 0;
               <td>
                 {gv.tested ? (
                   <span class="is-tested">
-                    <span aria-hidden="true">✅</span> Tested
+                    <Icon name="check-circle" size={16} /> Tested
                   </span>
                 ) : (
                   <span class="is-untested">
-                    <span aria-hidden="true">⚠️</span> Untested
+                    <Icon name="alert" size={16} /> Untested
                   </span>
                 )}
               </td>
