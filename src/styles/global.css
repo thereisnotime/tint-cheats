@@ -169,13 +169,52 @@ body {
   line-height: 1.6;
   color: var(--text);
   background-color: var(--bg);
-  background-image:
-    radial-gradient(900px 520px at 100% -5%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%),
-    radial-gradient(800px 480px at 0% 0%, color-mix(in srgb, var(--ok) 7%, transparent), transparent 55%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Dynamic, animated backdrop: drifting colour blobs behind all content. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -25%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 38% at 18% 22%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(34% 34% at 84% 14%, color-mix(in srgb, var(--ok) 18%, transparent), transparent 70%),
+    radial-gradient(42% 42% at 72% 88%, color-mix(in srgb, var(--info) 16%, transparent), transparent 72%),
+    radial-gradient(30% 30% at 30% 92%, color-mix(in srgb, var(--warn) 12%, transparent), transparent 70%);
+  filter: blur(40px) saturate(120%);
+  opacity: 0.85;
+  animation: bg-drift 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+/* Faint grid overlay for subtle texture. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, black, transparent 85%);
+  mask-image: radial-gradient(circle at 50% 30%, black, transparent 85%);
+}
+
+@keyframes bg-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, 1%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(3%, 3%, 0) scale(1.1);
+  }
 }
 
 main {
@@ -975,19 +1014,19 @@ samp {
 
 .hero {
   position: relative;
-  margin-bottom: var(--space-6);
-  padding: var(--space-7) var(--space-6);
+  margin-bottom: var(--space-5);
+  padding: var(--space-5) var(--space-6);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background:
     radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%),
     radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--ok) 12%, transparent), transparent 50%),
-    var(--bg-elev);
+    color-mix(in srgb, var(--bg-elev) 75%, transparent);
   overflow: hidden;
 }
 .hero__title {
-  font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3rem);
-  margin-bottom: var(--space-4);
+  font-size: clamp(1.7rem, 1.2rem + 2.2vw, 2.6rem);
+  margin-bottom: var(--space-3);
   background: linear-gradient(120deg, var(--text), color-mix(in srgb, var(--accent) 75%, var(--text)));
   -webkit-background-clip: text;
   background-clip: text;
@@ -995,9 +1034,9 @@ samp {
 }
 .hero__lead {
   max-width: 46rem;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--text-muted);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 /* --------------------------------------------------------------------------
