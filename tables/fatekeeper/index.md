@@ -14,8 +14,8 @@ game_versions:
 platforms: [Windows]
 singleplayer_only: true
 updated: 2026-06-20
-released: 2026-06-20
-tags: [action, unreal-engine, god-mode]
+released: 2026-06-02
+tags: [action, rpg, first-person, sword-and-sorcery, god-mode]
 cheats:
   - name: "God Mode"
     hotkey: "F1"
@@ -26,13 +26,22 @@ cheats:
 files:
   - name: "tint-fatekeeper-1.0.1.ct"
     label: "Fatekeeper Trainer (v1.0.1)"
+cover: ./media/cover.jpg
+game_description: "Venture into a handcrafted world where ruins whisper of past cataclysms. Master the art of sword and sorcery and forge your path with relics, spells and choices that shape who you become in this first-person RPG. By Paraglacial (published by THQ Nordic)."
+trailer: "https://store.steampowered.com/app/2186990/Fatekeeper/"
+screenshots:
+  - ./media/screenshot-1.jpg
+  - ./media/screenshot-2.jpg
+  - ./media/screenshot-3.jpg
+  - ./media/screenshot-4.jpg
 description: "Free, open-source Cheat Engine table for Fatekeeper: AOB-based God Mode that self-heals across game patches, plus a panic disable-all hotkey. Auto-attaches to the game."
 ---
 
 ## Overview
 
-A Cheat Engine table for **Fatekeeper** (Unreal Engine). It provides a God Mode
-that hooks the game's shared health-write routine and keeps the player topped up.
+A Cheat Engine table for **Fatekeeper**, a first-person sword-and-sorcery RPG
+(Unreal Engine). It provides a God Mode that hooks the game's shared health-write
+routine and keeps the player topped up.
 The hook is located with an AOB scan every time it is enabled, so it re-finds the
 right instruction after game updates instead of silently breaking.
 
@@ -86,5 +95,5 @@ with your game version.
 ## Credits
 
 - Table by TINT (thereisnotime).
-- Fatekeeper by its respective developer and publisher. This table is unofficial and
-  not affiliated with them.
+- Fatekeeper by Paraglacial (published by THQ Nordic). This table is unofficial and
+  not affiliated with the developers or publisher.
