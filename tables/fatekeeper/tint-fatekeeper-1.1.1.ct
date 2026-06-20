@@ -67,7 +67,7 @@ if mr then synchronize(function() mr.Active = false end) end
     <!-- ── Group header ──────────────────────────────────────────────── -->
     <CheatEntry>
       <ID>1</ID>
-      <Description>Fatekeeper Trainer v1.1.0  by TINT</Description>
+      <Description>Fatekeeper Trainer v1.1.1  by TINT</Description>
       <Color>808080</Color>
       <GroupHeader>1</GroupHeader>
       <Options moHideChildren="0" moDeactivateChildrenAsWell="1"/>
@@ -87,8 +87,18 @@ if mr then synchronize(function() mr.Active = false end) end
       they are distinguished only by [rsi+378].  So both cheats must share one hook.
 
         fkFlags+0 (dword) = God Mode      : if set, force HEALTH (rsi+378!=0) to 999
-        fkFlags+4 (dword) = Unlimited Mana: if set, force NON-HEALTH (rsi+378==0)
-                                            current(rsi+34) = max(rsi+30)  -> pinned full
+        fkFlags+4 (dword) = Unlimited Mana: if set, and the object is the MANA
+                                            attribute (type id @ +8 == 0x1C927),
+                                            force current(rsi+34) = max(rsi+30).
+
+      The +8 id matters: rsi+378==0 covers ~2600 non-health attributes (rates,
+      resists, multipliers); maxing all of them is wrong, so we match only Mana's
+      type id.  These attribute objects share vtable SLASHER+8E4A420; their type id
+      sits at +8 (e.g. Mana=1C927, found by enumerating the class and comparing).
+
+      Zero-regen note: the hook acts on the game's writes, so it can't raise mana
+      from empty if nothing writes it.  F2's enable script kickstarts every Mana
+      object to its max once; the hook holds it thereafter.
 
       F1 / F2 just flip those flag dwords; either one auto-installs the shared hook
       (the "[ Core ]" record).  Found via debugger "find what writes" on the live
@@ -123,9 +133,13 @@ newmem:
   mov dword ptr [rsi+34],(float)999.0
   jmp return
 nonhealth:
-  // non-health resource (mana/stamina) -> Unlimited Mana (pin current = max)
+  // non-health resource -> Unlimited Mana, but ONLY the Mana attribute.
+  // Each attribute object carries a type id at +8; Mana == 0x1C927.
+  // (Without this, EVERY non-health attribute -- ~2600 rates/resists/etc -- gets maxed.)
   cmp dword ptr [fkFlags+4],0
   je orig
+  cmp dword ptr [rsi+08],1C927
+  jne orig
   push rax
   mov eax,[rsi+30]
   mov [rsi+34],eax
@@ -206,6 +220,26 @@ if not pcall(function() writeInteger("fkFlags+4", 1) end) then
   reinitializeSymbolhandler()
   pcall(function() writeInteger("fkFlags+4", 1) end)
 end
+-- Kickstart: with zero regen the write-hook can't lift mana from empty, so set
+-- every existing Mana attribute (type id @ +8 == 0x1C927) to its max once; the
+-- hook then holds it there through every cast.
+pcall(function()
+  local mod = getAddress("SLASHER-Win64-Shipping.exe")
+  if not mod or mod == 0 then return end
+  local VT = mod + 0x8E4A420                 -- shared resource-object vtable
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtQword, rtRounded, string.format("%d", VT), "",
+               0, 0x7fffffffffff, "+W-C", fsmAligned, "4", false, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  for i = 0, fl.Count - 1 do
+    local b = tonumber(fl.getAddress(i), 16)
+    if b and readInteger(b + 0x08, false) == 0x1C927 then
+      writeInteger(b + 0x34, readInteger(b + 0x30, false))   -- cur = max
+    end
+  end
+  fl.destroy(); ms.destroy()
+end)
 [DISABLE]
 pcall(function() writeInteger("fkFlags+4", 0) end)
 </AssemblerScript>
@@ -244,7 +278,7 @@ for i = 0, al.Count - 1 do
     if mr and not mr.isGroupHeader then mr.Active = false end
   end)
 end
-MainForm.Caption = "Fatekeeper Trainer v1.1.0  [ALL CHEATS OFF]"
+MainForm.Caption = "Fatekeeper Trainer v1.1.1  [ALL CHEATS OFF]"
 
 [DISABLE]
 </AssemblerScript>
@@ -253,7 +287,7 @@ MainForm.Caption = "Fatekeeper Trainer v1.1.0  [ALL CHEATS OFF]"
   </CheatEntries>
 
   <LuaScript>
---[[ Fatekeeper Trainer v1.1.0  by TINT
+--[[ Fatekeeper Trainer v1.1.1  by TINT
      Game version: current Steam build (AOB-based, version independent)
      Process: SLASHER-Win64-Shipping.exe
 
@@ -302,14 +336,14 @@ _FK_watchTimer.OnTimer = function()
       openProcess(pid)
       _FK_attached = true
       _FK_pid      = pid
-      MainForm.Caption = "Fatekeeper Trainer v1.1.0  [ATTACHED pid=" .. pid .. "]"
+      MainForm.Caption = "Fatekeeper Trainer v1.1.1  [ATTACHED pid=" .. pid .. "]"
     end
   else
     if _FK_attached then
       FK_disableAll()
       _FK_attached = false
       _FK_pid      = 0
-      MainForm.Caption = "Fatekeeper Trainer v1.1.0  [WAITING FOR GAME...]"
+      MainForm.Caption = "Fatekeeper Trainer v1.1.1  [WAITING FOR GAME...]"
     end
   end
 end
@@ -320,9 +354,9 @@ if _pid0 and _pid0 ~= 0 then
   openProcess(_pid0)
   _FK_attached = true
   _FK_pid      = _pid0
-  MainForm.Caption = "Fatekeeper Trainer v1.1.0  [ATTACHED pid=" .. _pid0 .. "]"
+  MainForm.Caption = "Fatekeeper Trainer v1.1.1  [ATTACHED pid=" .. _pid0 .. "]"
 else
-  MainForm.Caption = "Fatekeeper Trainer v1.1.0  [WAITING FOR GAME...]"
+  MainForm.Caption = "Fatekeeper Trainer v1.1.1  [WAITING FOR GAME...]"
 end
   </LuaScript>
   <UserdefinedSymbols/>

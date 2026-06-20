@@ -3,7 +3,7 @@ title: "Fatekeeper Cheat Engine Table"
 game: "Fatekeeper"
 slug: "fatekeeper"
 status: working
-table_version: "1.1.0"
+table_version: "1.1.1"
 author: "TINT"
 author_url: "https://github.com/thereisnotime"
 ce_version: ">=7.5"
@@ -22,13 +22,13 @@ cheats:
     description: "Forces the player's health high on the shared damage-write hook so you don't die. AOB-based, so it relocates itself after game patches."
   - name: "Unlimited Mana"
     hotkey: "F2"
-    description: "Pins mana (and other non-health resources like stamina) to full by writing max over current on the same shared hook. AOB-based; relocates after patches."
+    description: "Pins your mana to full on the shared hook (matched precisely by the Mana attribute's type id) and kickstarts it once on enable, so it works even with zero regen. AOB-based; relocates after patches."
   - name: "Disable All Cheats"
     hotkey: "F12"
     description: "Panic key: turns every active cheat back off at once."
 files:
-  - name: "tint-fatekeeper-1.1.0.ct"
-    label: "Fatekeeper Trainer (v1.1.0)"
+  - name: "tint-fatekeeper-1.1.1.ct"
+    label: "Fatekeeper Trainer (v1.1.1)"
 cover: ./media/cover.jpg
 game_description: "Venture into a handcrafted world where ruins whisper of past cataclysms. Master the art of sword and sorcery and forge your path with relics, spells and choices that shape who you become in this first-person RPG. By Paraglacial (published by THQ Nordic)."
 trailer: "https://store.steampowered.com/app/2186990/Fatekeeper/"
@@ -56,8 +56,9 @@ paywalls, surveys, or download gates.
 - God Mode and Unlimited Mana share one write instruction. The game stores both
   health and mana through the same routine; the table tells them apart by the
   object's health-component flag and applies the right effect to each.
-- God Mode forces health high; Unlimited Mana pins non-health resources (mana,
-  stamina) to their maximum.
+- God Mode forces health high. Unlimited Mana pins only your mana to full — it
+  matches the Mana attribute by its type id rather than every non-health stat —
+  and kickstarts mana once on enable so it fills even when regen is zero.
 - Enabling F1 or F2 auto-installs the shared hook on demand — you don't need to
   toggle anything else.
 - F12 is a panic key that disables every active cheat at once.
@@ -71,7 +72,7 @@ paywalls, surveys, or download gates.
 ## Installation & Usage
 
 1. Install Cheat Engine 7.5 or newer.
-2. Download `tint-fatekeeper-1.1.0.ct` from the download box on this page.
+2. Download `tint-fatekeeper-1.1.1.ct` from the download box on this page.
 3. Verify the SHA-256 shown here (optional but recommended).
 4. Launch Fatekeeper.
 5. Open the `.CT` file in Cheat Engine. It auto-attaches to the game.
@@ -97,6 +98,13 @@ with your game version.
   system may need a table update.
 
 ## Changelog
+
+### 1.1.1
+- Unlimited Mana now affects **only** the Mana attribute (matched by its type id)
+  instead of every non-health attribute, so it no longer maxes unrelated stats
+  like rates, resists, and multipliers.
+- Added a one-time kickstart on enable so mana fills even with zero regen (the
+  write hook alone can't lift it from empty).
 
 ### 1.1.0
 - Added **Unlimited Mana** (F2): pins mana and other non-health resources to full
