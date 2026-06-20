@@ -1173,15 +1173,39 @@ samp {
   box-shadow: var(--shadow);
 }
 .table-card__cover-link {
+  position: relative;
   display: block;
   aspect-ratio: 16 / 9;
   background: var(--bg-subtle);
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
 }
 .table-card__cover {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+/* Centered game logo overlaid on the cover art (Steam-capsule style). */
+.table-card__logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  max-width: 72%;
+  max-height: 56%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
+  pointer-events: none;
+  z-index: 1;
+}
+/* Darken the art a touch (only when a logo is overlaid) for legibility. */
+.table-card__cover-link:has(.table-card__logo)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.35));
+  pointer-events: none;
 }
 .table-card__body {
   display: flex;
