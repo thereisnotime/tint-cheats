@@ -66,12 +66,20 @@ new-table slug game:
     fi
     cp -r "$src" "$dst"
     mkdir -p "$dst/media"
+    # Rename the starter .CT to the convention: tint-<game-slug>-<version>.ct
+    gslug=$(printf '%s' "{{game}}" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
+    newct="tint-${gslug}-0.1.0.ct"
+    if [[ -f "$dst/tint-sample-game-0.1.0.ct" ]]; then
+        mv "$dst/tint-sample-game-0.1.0.ct" "$dst/$newct"
+    fi
     if [[ -f "$dst/index.md" ]]; then
-        sed -i "s/^title:.*/title: \"{{game}} Table\"/" "$dst/index.md"
+        sed -i "s/^title:.*/title: \"{{game}} Cheat Engine Table\"/" "$dst/index.md"
         sed -i "s/^game:.*/game: \"{{game}}\"/" "$dst/index.md"
         sed -i "s/^slug:.*/slug: \"{{slug}}\"/" "$dst/index.md"
+        sed -i "s/tint-sample-game-0.1.0.ct/${newct}/g" "$dst/index.md"
     fi
     printf "{{GREEN}}created{{RESET}} %s\n" "$dst"
+    printf "{{DIM}}Next: replace the .CT and media, fill in index.md, then run {{RESET}}{{BOLD}}just verify{{RESET}}\n"
 
 # DEV: start the Astro dev server
 dev: checksums
