@@ -3,7 +3,7 @@ title: "SWAPMEAT Cheat Engine Table"
 game: "SWAPMEAT"
 slug: "swapmeat"
 status: working
-table_version: "0.4.4"
+table_version: "0.4.5"
 author: "TINT"
 author_url: "https://github.com/thereisnotime"
 ce_version: ">=7.5"
@@ -33,8 +33,8 @@ cheats:
     hotkey: "F12"
     description: "Panic key: turns every active cheat back off at once."
 files:
-  - name: "tint-swapmeat-0.4.4.ct"
-    label: "SWAPMEAT Trainer (v0.4.4)"
+  - name: "tint-swapmeat-0.4.5.ct"
+    label: "SWAPMEAT Trainer (v0.4.5)"
 cover: ./media/cover.jpg
 game_description: "SWAPMEAT is a roguelite third-person shooter where you harvest alien body parts — heads, torsos and legs, each with its own power — to improvise new builds mid-fight. Play solo or in 4-player co-op. By One More Game."
 trailer: "https://store.steampowered.com/app/2790700/SWAPMEAT/"
@@ -79,7 +79,7 @@ paywalls, surveys, or download gates.
 ## Installation & Usage
 
 1. Install Cheat Engine 7.5 or newer.
-2. Download `tint-swapmeat-0.4.4.ct` from the download box on this page.
+2. Download `tint-swapmeat-0.4.5.ct` from the download box on this page.
 3. Verify the SHA-256 shown here (optional but recommended).
 4. Launch SWAPMEAT and start a solo or hosted run.
 5. Open the `.CT` file in Cheat Engine. It auto-attaches to the game.
@@ -106,6 +106,10 @@ with your game version.
   until the table is updated.
 
 ## Changelog
+
+### 0.4.5
+- Added the tint-cheats community/info rows (Telegram and Matrix links) to the
+  in-table header. No gameplay changes.
 
 ### 0.4.4 - initial release
 - Infinite Ammo (F1), God Mode (F2), Currency freeze with editable
