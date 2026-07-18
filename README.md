@@ -22,6 +22,7 @@ This project exists because finding clean tables online is a nightmare of survey
 
 | Game | Status | Table ver | Tested game ver | Updated | Link |
 | --- | --- | --- | --- | --- | --- |
+| SWAPMEAT | ✅ Working | 0.4.4 | Current Steam build (Early Access) | 2026-07-18 | [open](tables/swapmeat/) |
 | Fatekeeper | ✅ Working | 1.1.1 | Current Steam build | 2026-06-21 | [open](tables/fatekeeper/) |
 | Arms of God | ✅ Working | 1.2.1 | 1.0 | 2026-06-20 | [open](tables/arms-of-god/) |
 | 20 Minutes Till Dawn | ✅ Working | 1.7.1 | Current Steam build | 2026-06-20 | [open](tables/minutes-till-dawn/) |

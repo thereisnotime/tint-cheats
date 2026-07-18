@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="40">
+  <CheatEntries>
+
+    <!-- == tint-cheats community: free, open-source CE tables (no paywalls, no malware, no surveys) == -->
+    <CheatEntry>
+      <ID>900</ID>
+      <Description>tint-cheats  -  free, open-source CE tables  -  no paywalls, no malware, no surveys</Description>
+      <Color>1E90FF</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>901</ID>
+          <Description>[ Open ]  Official site and free downloads  (thereisnotime.github.io/tint-cheats)</Description>
+          <Color>1E90FF</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+[ENABLE]
+shellExecute([[https://thereisnotime.github.io/tint-cheats]])
+local mr = memrec
+if mr then synchronize(function() mr.Active = false end) end
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+
+    <!-- ===================== separator: header / cheats ===================== -->
+    <CheatEntry>
+      <ID>904</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
+    <!-- ── Group header ──────────────────────────────────────────────── -->
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>Swapmeat Trainer v0.4.4  by TINT</Description>
+      <Color>808080</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0" moDeactivateChildrenAsWell="1"/>
+    </CheatEntry>
+
+    <!--
+      Engine: Unity + Mono (mono-2.0-bdwgc.dll = Boehm GC, non-moving).
+      Cheats re-find live instances by Mono class vtable (mono_class_getVTable +
+      firstScan for that pointer). SOLO / HOST only (FishNet server-authoritative).
+      ce-mcp memory_scan tool + Lua nextScan are broken on this build; only firstScan.
+    -->
+
+    <!--
+      F1 Infinite Ammo (universal, one code patch).
+      Omg.Rog.MagazineAmmoFeedState.ConsumeAmmo (the ammo-consume method) does:
+          movsxd rax,[rsi+0x98]   ; load m_currentAmmo
+          dec eax                 ; <- consume
+          mov [rsi+0x98],eax      ; store back
+      NOP the 'dec eax' (FF C8 -> 90 90) and ammo never decrements for ANY weapon
+      using this feed (no per-weapon freezing / magazine-size guessing).
+      JIT address changes each run -> re-resolve via mono_compile_method on enable;
+      locate the patch site by the byte pattern 48 63 86 98 00 00 00 FF C8.
+    -->
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>[ F1 ]  Infinite Ammo</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys><Hotkey><Action>Toggle</Action><Keys>112</Keys><ActivateSound>Activate</ActivateSound><DeactivateSound>Deactivate</DeactivateSound></Hotkey></Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+if not SM_initMono() then return end
+SM_ammoPatchAddr = nil; SM_ammoPatchOrig = nil
+local cls = mono_findClass("Omg.Rog", "MagazineAmmoFeedState")
+if not cls then MainForm.Caption = "Swapmeat Trainer v0.4.4  [ammo class not found]"; return end
+local mptr
+for _, mm in ipairs(mono_class_enumMethods(cls)) do
+  local n = tostring(mm.name)
+  if n:find("ConsumeAmmo") and not n:find("CanConsume") then mptr = mm.method end
+end
+if not mptr then MainForm.Caption = "Swapmeat Trainer v0.4.4  [ConsumeAmmo not found]"; return end
+local jit = mono_compile_method(mptr)
+if not jit or jit == 0 then MainForm.Caption = "Swapmeat Trainer v0.4.4  [compile failed]"; return end
+-- find  48 63 86 98 00 00 00 FF C8  and NOP the trailing FF C8 (dec eax)
+local pat = { 0x48,0x63,0x86,0x98,0x00,0x00,0x00,0xFF,0xC8 }
+for off = 0, 0x80 do
+  local ok = true
+  for k = 1, #pat do
+    local bt = readBytes(jit + off + k - 1, 1, true)
+    if not bt or bt[1] ~= pat[k] then ok = false; break end
+  end
+  if ok then
+    SM_ammoPatchAddr = jit + off + 7   -- the FF C8
+    SM_ammoPatchOrig = { 0xFF, 0xC8 }
+    writeBytes(SM_ammoPatchAddr, 0x90, 0x90)
+    break
+  end
+end
+if not SM_ammoPatchAddr then MainForm.Caption = "Swapmeat Trainer v0.4.4  [patch site not found]"; return end
+MainForm.Caption = "Swapmeat Trainer v0.4.4  [INFINITE AMMO ON]"
+
+[DISABLE]
+if SM_ammoPatchAddr and SM_ammoPatchOrig then
+  pcall(function() writeBytes(SM_ammoPatchAddr, SM_ammoPatchOrig[1], SM_ammoPatchOrig[2]) end)
+end
+SM_ammoPatchAddr = nil; SM_ammoPatchOrig = nil
+MainForm.Caption = "Swapmeat Trainer v0.4.4"
+</AssemblerScript>
+    </CheatEntry>
+
+    <!-- F2 God Mode: freeze local player's HealthBehavior health at max -->
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>[ F2 ]  God Mode  (freeze health at max)</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys><Hotkey><Action>Toggle</Action><Keys>113</Keys><ActivateSound>Activate</ActivateSound><DeactivateSound>Deactivate</DeactivateSound></Hotkey></Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+if not SM_initMono() then return end
+SM_hpVT = mono_class_getVTable(mono_findClass("Omg.Rog", "PlayerBehavior"))
+if not SM_hpVT then MainForm.Caption = "Swapmeat Trainer v0.4.4  [player class not found]"; return end
+SM_hpList = {}
+function SM_findPlayerHP()
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtQword, rtRounded, string.format("%d", SM_hpVT), "", 0, 0x7fffffffffff, "+W-C", fsmAligned, "4", false, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local list = {}
+  for i = 0, fl.Count - 1 do
+    local pb = tonumber(fl.getAddress(i), 16)
+    local char = readQword(pb + 280)
+    if char and char > 0x10000 and char &lt; 0x7F0000000000 then
+      local hb = readQword(char + 224)
+      if hb and hb > 0x10000 and hb &lt; 0x7F0000000000 then
+        local hl = readQword(hb + 280); local col = hl and readQword(hl + 96)
+        local items = col and readQword(col + 16); local size = col and readInteger(col + 24, false) or 0
+        if items and items > 0x10000 and size >= 1 and size &lt;= 32 then
+          for e = 0, size - 1 do
+            local base = items + 0x20 + e * 8
+            local mx = readFloat(base + 4)
+            if mx and mx > 0 then list[#list + 1] = base end
+          end
+        end
+      end
+    end
+  end
+  fl.destroy(); ms.destroy()
+  SM_hpList = list
+end
+SM_hpScanTimer = createTimer(nil, false); SM_hpScanTimer.Interval = 3000
+SM_hpScanTimer.OnTimer = function() pcall(SM_findPlayerHP) end
+pcall(SM_findPlayerHP); SM_hpScanTimer.Enabled = true
+SM_hpFreezeTimer = createTimer(nil, false); SM_hpFreezeTimer.Interval = 30
+SM_hpFreezeTimer.OnTimer = function()
+  if SM_hpList then for _, base in ipairs(SM_hpList) do
+    local mx = readFloat(base + 4); if mx and mx > 0 then pcall(writeFloat, base, mx) end
+  end end
+end
+SM_hpFreezeTimer.Enabled = true
+MainForm.Caption = "Swapmeat Trainer v0.4.4  [GOD MODE ON]"
+
+[DISABLE]
+if SM_hpScanTimer then pcall(function() SM_hpScanTimer.destroy() end); SM_hpScanTimer = nil end
+if SM_hpFreezeTimer then pcall(function() SM_hpFreezeTimer.destroy() end); SM_hpFreezeTimer = nil end
+SM_hpList = nil
+MainForm.Caption = "Swapmeat Trainer v0.4.4"
+</AssemblerScript>
+    </CheatEntry>
+
+    <!--
+      F3 Currency freeze. Currencies = Omg.Rog.CurrencyBag objects {+16 CurrencyCode,
+      +20 Count, +24 LifetimeEarnings}. Codes:  7=Glizzy  26=Incentive Points  4=Cent.
+      Freezes each matching bag's Count to an editable lock value (child entries).
+      Edit a value and it sets/holds that currency; leave at 99999 to max forever.
+    -->
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>[ F3 ]  Currency  (freeze to values below)</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys><Hotkey><Action>Toggle</Action><Keys>114</Keys><ActivateSound>Activate</ActivateSound><DeactivateSound>Deactivate</DeactivateSound></Hotkey></Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+if not SM_initMono() then return end
+SM_allocCurVals()
+SM_curVT = mono_class_getVTable(mono_findClass("Omg.Rog", "CurrencyBag"))
+if not SM_curVT then MainForm.Caption = "Swapmeat Trainer v0.4.4  [currency class not found]"; return end
+SM_curMap = { [7] = SM_valGlizzy, [26] = SM_valIncentive, [4] = SM_valCent, [43] = SM_valObtanium }
+SM_curObjs = {}
+function SM_rescanCur()
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtQword, rtRounded, string.format("%d", SM_curVT), "", 0, 0x7fffffffffff, "+W-C", fsmAligned, "4", false, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local objs = {}
+  for i = 0, fl.Count - 1 do
+    local b = tonumber(fl.getAddress(i), 16)
+    local code = readInteger(b + 16, false); local count = readInteger(b + 20, false)
+    if code and count and count >= 0 and count &lt; 100000000 and SM_curMap[code] then
+      objs[#objs + 1] = { cnt = b + 20, val = SM_curMap[code] }
+    end
+  end
+  fl.destroy(); ms.destroy()
+  SM_curObjs = objs
+end
+SM_curScanTimer = createTimer(nil, false); SM_curScanTimer.Interval = 2000
+SM_curScanTimer.OnTimer = function() pcall(SM_rescanCur) end
+pcall(SM_rescanCur); SM_curScanTimer.Enabled = true
+SM_curFreezeTimer = createTimer(nil, false); SM_curFreezeTimer.Interval = 250
+SM_curFreezeTimer.OnTimer = function()
+  if SM_curObjs then for _, o in ipairs(SM_curObjs) do
+    local v = o.val and readInteger(o.val, false)
+    if v then pcall(writeInteger, o.cnt, v) end
+  end end
+end
+SM_curFreezeTimer.Enabled = true
+MainForm.Caption = "Swapmeat Trainer v0.4.4  [CURRENCY ON]"
+
+[DISABLE]
+if SM_curScanTimer then pcall(function() SM_curScanTimer.destroy() end); SM_curScanTimer = nil end
+if SM_curFreezeTimer then pcall(function() SM_curFreezeTimer.destroy() end); SM_curFreezeTimer = nil end
+SM_curObjs = nil
+MainForm.Caption = "Swapmeat Trainer v0.4.4"
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>  Glizzy value (edit me)</Description>
+          <ShowAsHex>0</ShowAsHex>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SM_valGlizzy</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>  Incentive Points value (edit me)</Description>
+          <ShowAsHex>0</ShowAsHex>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SM_valIncentive</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>12</ID>
+          <Description>  Cent value (edit me)</Description>
+          <ShowAsHex>0</ShowAsHex>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SM_valCent</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>13</ID>
+          <Description>  Obtanium value (edit me)</Description>
+          <ShowAsHex>0</ShowAsHex>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SM_valObtanium</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+
+    <!--
+      F5 XP Per Kill (universal method patch, same technique as F1 ammo).
+      Omg.Rog.SharedXpLevelBehavior.ServerAddXpFromEnemyKill(xmm1 = xp, ...) is the
+      server-side XP grant on every kill. Client-side XP writes are ignored (FishNet
+      server-authoritative), so we patch the SERVER method: hook the entry, multiply
+      xmm1 by an editable float, run the displaced 15-byte prologue, jump back.
+      15-byte prologue: 55 | 48 8B EC | 48 81 EC B0 00 00 00 | 48 89 75 E0.
+      JIT address changes per run -> re-resolve via mono_compile_method on enable;
+      absolute (FF 25) jumps because the cave can be >2GB from the JIT.
+      The multiplier float lives in the cave (registered as SM_xpMult, editable below).
+    -->
+    <CheatEntry>
+      <ID>5</ID>
+      <Description>[ F5 ]  XP Per Kill  (fast level-up)</Description>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys><Hotkey><Action>Toggle</Action><Keys>116</Keys><ActivateSound>Activate</ActivateSound><DeactivateSound>Deactivate</DeactivateSound></Hotkey></Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+if not SM_initMono() then return end
+local c = mono_findClass("Omg.Rog", "SharedXpLevelBehavior")
+if not c then MainForm.Caption = "Swapmeat Trainer v0.4.4  [xp class not found]"; return end
+local mptr
+for _, m in ipairs(mono_class_enumMethods(c)) do
+  if tostring(m.name) == "ServerAddXpFromEnemyKill" then mptr = m.method end
+end
+if not mptr then MainForm.Caption = "Swapmeat Trainer v0.4.4  [xp method not found]"; return end
+local jit = mono_compile_method(mptr)
+if not jit or jit == 0 then MainForm.Caption = "Swapmeat Trainer v0.4.4  [compile failed]"; return end
+local pro = {0x55,0x48,0x8B,0xEC,0x48,0x81,0xEC,0xB0,0x00,0x00,0x00,0x48,0x89,0x75,0xE0}
+SM_xpOrig = {}
+for k = 1, #pro do
+  local b = readBytes(jit + k - 1, 1, true)
+  SM_xpOrig[k] = b and b[1] or -1
+  if not b or b[1] ~= pro[k] then MainForm.Caption = "Swapmeat Trainer v0.4.4  [xp prologue changed]"; return end
+end
+local cave = allocateMemory(0x100)
+if not cave or cave == 0 then MainForm.Caption = "Swapmeat Trainer v0.4.4  [alloc failed]"; return end
+SM_xpJit = jit; SM_xpCave = cave
+local function wb(a, t) for i, v in ipairs(t) do writeBytes(a + i - 1, v) end end
+local back = jit + 15
+wb(cave + 0x00, {0xF3,0x0F,0x59,0x0D,0x1D,0x00,0x00,0x00})
+wb(cave + 0x08, {0x55})
+wb(cave + 0x09, {0x48,0x8B,0xEC})
+wb(cave + 0x0C, {0x48,0x81,0xEC,0xB0,0x00,0x00,0x00})
+wb(cave + 0x13, {0x48,0x89,0x75,0xE0})
+wb(cave + 0x17, {0xFF,0x25,0x00,0x00,0x00,0x00}); writeQword(cave + 0x1D, back)
+writeFloat(cave + 0x25, 100.0)
+pcall(registerSymbol, "SM_xpMult", cave + 0x25)
+wb(jit + 0x00, {0xFF,0x25,0x00,0x00,0x00,0x00}); writeQword(jit + 0x06, cave)
+wb(jit + 0x0E, {0x90})
+MainForm.Caption = "Swapmeat Trainer v0.4.4  [XP PER KILL ON]"
+
+[DISABLE]
+if SM_xpJit and SM_xpOrig then for i = 1, 15 do pcall(writeBytes, SM_xpJit + i - 1, SM_xpOrig[i]) end end
+pcall(unregisterSymbol, "SM_xpMult")
+if SM_xpCave and SM_xpCave ~= 0 then pcall(deAlloc, SM_xpCave) end
+SM_xpJit = nil; SM_xpCave = nil; SM_xpOrig = nil
+MainForm.Caption = "Swapmeat Trainer v0.4.4"
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>  XP per-kill multiplier (edit me)</Description>
+          <ShowAsHex>0</ShowAsHex>
+          <VariableType>Float</VariableType>
+          <Address>SM_xpMult</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+
+    <!-- ===================== separator: footer ===================== -->
+    <CheatEntry>
+      <ID>998</ID>
+      <Description>=========================================================================</Description>
+      <Color>404040</Color>
+      <GroupHeader>1</GroupHeader>
+      <Options moHideChildren="0"/>
+    </CheatEntry>
+
+    <!-- ── F12: Disable All (always last) ───────────────────────────── -->
+    <CheatEntry>
+      <ID>99</ID>
+      <Description>[ F12 ]  Disable All Cheats</Description>
+      <Color>808080</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <Hotkeys><Hotkey><Action>Toggle</Action><Keys>123</Keys><ActivateSound>Deactivate</ActivateSound></Hotkey></Hotkeys>
+      <AssemblerScript>{$LUA}
+if syntaxcheck then return end
+
+[ENABLE]
+local al = getAddressList()
+for i = 0, al.Count - 1 do
+  local mr = al.getMemoryRecord(i)
+  pcall(function()
+    if mr and not mr.isGroupHeader then mr.Active = false end
+  end)
+end
+MainForm.Caption = "Swapmeat Trainer v0.4.4  [ALL CHEATS OFF]"
+
+[DISABLE]
+</AssemblerScript>
+    </CheatEntry>
+
+  </CheatEntries>
+
+  <LuaScript>
+--[[ Swapmeat Trainer v0.4.4  by TINT
+     Game version: (unknown - fill in)
+     Engine: Unity + Mono (mono-2.0-bdwgc.dll, Boehm non-moving GC)
+     Process: SWAPMEAT.exe
+
+     Hotkeys:
+       F1  -- Infinite Ammo   (Omg.Rog.MagazineAmmoFeedState +0x98)
+       F2  -- God Mode        (freeze local player's health at max)
+       F3  -- Currency        (freeze Glizzy/Incentive/Cent/Obtanium to editable values)
+       F5  -- XP Per Kill      (patch ServerAddXpFromEnemyKill, xmm1 * editable mult)
+       F12 -- Disable All (panic key)
+
+     Notes:
+       - Solo / host only: FishNet is server-authoritative; edits revert if you JOIN.
+       - Mono must be active. SM_initMono() launches the collector; if it wedges,
+         restart CE + game fresh, then CE menu Mono -> Activate.
+       - Currency codes: 7=Glizzy, 26=Incentive Points, 4=Cent, 43=Obtanium (Omg.Rog.CurrencyBag).
+]]
+
+local PROC = "SWAPMEAT.exe"
+local _attached = false
+local _pid      = 0
+
+SM_valGlizzy = nil; SM_valIncentive = nil; SM_valCent = nil; SM_valObtanium = nil
+
+function SM_allocCurVals()
+  if SM_valGlizzy and SM_valGlizzy ~= 0 then return end
+  local function mk(name, def)
+    local ok, addr = pcall(allocateMemory, 4)
+    if ok and addr and addr ~= 0 then
+      pcall(writeInteger, addr, def)
+      pcall(registerSymbol, name, addr)
+      return addr
+    end
+  end
+  SM_valGlizzy    = mk("SM_valGlizzy", 99999)
+  SM_valIncentive = mk("SM_valIncentive", 99999)
+  SM_valCent      = mk("SM_valCent", 99999)
+  SM_valObtanium  = mk("SM_valObtanium", 99999)
+end
+
+local function SM_freeCurVals()
+  for _, n in ipairs({ "SM_valGlizzy", "SM_valIncentive", "SM_valCent", "SM_valObtanium" }) do pcall(unregisterSymbol, n) end
+  for _, a in ipairs({ SM_valGlizzy, SM_valIncentive, SM_valCent, SM_valObtanium }) do if a and a ~= 0 then pcall(freeMemory, a) end end
+  SM_valGlizzy = nil; SM_valIncentive = nil; SM_valCent = nil; SM_valObtanium = nil
+end
+
+function SM_initMono()
+  local pid = getProcessIDFromProcessName(PROC)
+  if not pid or pid == 0 then
+    MainForm.Caption = "Swapmeat Trainer v0.4.4  [start the game first]"
+    return false
+  end
+  openProcess(pid)
+  if LaunchMonoDataCollector() == 0 then
+    MainForm.Caption = "Swapmeat Trainer v0.4.4  [Mono init failed - CE menu: Mono > Activate]"
+    return false
+  end
+  return true
+end
+
+local function disableAll()
+  local al = getAddressList()
+  for i = 0, al.Count - 1 do
+    local mr = al.getMemoryRecord(i)
+    pcall(function()
+      if mr and not mr.isGroupHeader then mr.Active = false end
+    end)
+  end
+end
+
+local _watchTimer = createTimer(nil, false)
+_watchTimer.Interval = 2000
+_watchTimer.OnTimer = function()
+  local pid = getProcessIDFromProcessName(PROC)
+  if pid and pid ~= 0 then
+    if not _attached or _pid ~= pid then
+      if _attached then disableAll() end
+      openProcess(pid)
+      _attached = true
+      _pid      = pid
+      SM_allocCurVals()
+      MainForm.Caption = "Swapmeat Trainer v0.4.4  [ATTACHED pid=" .. pid .. "]"
+    end
+  else
+    if _attached then
+      disableAll()
+      SM_freeCurVals()
+      _attached = false
+      _pid      = 0
+      MainForm.Caption = "Swapmeat Trainer v0.4.4  [WAITING FOR GAME...]"
+    end
+  end
+end
+_watchTimer.Enabled = true
+
+local _pid0 = getProcessIDFromProcessName(PROC)
+if _pid0 and _pid0 ~= 0 then
+  openProcess(_pid0)
+  _attached = true
+  _pid      = _pid0
+  SM_allocCurVals()
+  MainForm.Caption = "Swapmeat Trainer v0.4.4  [ATTACHED pid=" .. _pid0 .. "]"
+else
+  MainForm.Caption = "Swapmeat Trainer v0.4.4  [WAITING FOR GAME...]"
+end
+  </LuaScript>
+  <UserdefinedSymbols/>
+</CheatTable>

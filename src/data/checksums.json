@@ -22,5 +22,13 @@
     "download": "/downloads/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct",
     "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct",
     "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/minutes-till-dawn/tint-20-minutes-till-dawn-1.7.1.ct"
+  },
+  "swapmeat/tint-swapmeat-0.4.4.ct": {
+    "sha256": "59b768c246041dac086bb7b073eaed6106123ea6c5168ba7d21aba0fb0860c05",
+    "size": 19551,
+    "virustotal": "https://www.virustotal.com/gui/file/59b768c246041dac086bb7b073eaed6106123ea6c5168ba7d21aba0fb0860c05",
+    "download": "/downloads/swapmeat/tint-swapmeat-0.4.4.ct",
+    "raw": "https://raw.githubusercontent.com/thereisnotime/tint-cheats/main/tables/swapmeat/tint-swapmeat-0.4.4.ct",
+    "history": "https://github.com/thereisnotime/tint-cheats/commits/main/tables/swapmeat/tint-swapmeat-0.4.4.ct"
   }
 }
